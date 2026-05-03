@@ -4,6 +4,8 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { LiveMessage } from "../hooks/useChatStream";
 import { Send, Mic, MicOff, BarChart3, ArrowRight } from "lucide-react";
+import { MarkdownMessage } from "./MarkdownMessage";
+import { TypingIndicator } from "./TypingIndicator";
 
 interface ChatPanelProps {
   messages: LiveMessage[];
@@ -136,34 +138,6 @@ export function ChatPanel({
         ref={containerRef}
         className="flex-1 overflow-y-auto px-6 sm:px-7 lg:px-8 xl:px-10"
       >
-        {messages.length === 0 && (
-          <div className="py-12 sm:py-16 lg:py-20 flex flex-col items-start">
-            <div className="max-w-[85%] sm:max-w-[75%]">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
-                  <img
-                    src="/img/qubra.png"
-                    alt="Qubra"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="text-[11px] font-medium uppercase tracking-wider text-[#E8E4F5]/50">
-                  Qubra
-                </span>
-              </div>
-              <div className="qubra-message-border pl-4">
-                <p className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-white/90 leading-relaxed">
-                  Detecté que tu marca necesita un diagnóstico. Vamos a encontrar las fugas.
-                </p>
-              </div>
-              <p className="text-sm sm:text-base text-white/40 mt-4 leading-relaxed">
-                Soy Qubra, tu consultor digital de Vanguardistas. Voy a hacerte algunas preguntas 
-                para entender tu negocio y generar un diagnóstico personalizado.
-              </p>
-            </div>
-          </div>
-        )}
-
         <div className="space-y-5 pt-4">
           {messages.map((message) => {
             const isProgress = message.type === "progress";
@@ -253,9 +227,7 @@ export function ChatPanel({
                           <span className="text-[15px] text-white/70">Mensaje de voz</span>
                         </div>
                       ) : (
-                        <p className="text-[15px] text-white/90 leading-relaxed whitespace-pre-wrap">
-                          {message.content}
-                        </p>
+                        <MarkdownMessage content={message.content} />
                       )}
                     </div>
                   )}
@@ -279,12 +251,8 @@ export function ChatPanel({
                     Qubra
                   </span>
                 </div>
-                <div className="rounded-2xl rounded-tl-sm px-4 py-3 qubra-message-border pl-4 bg-white/[0.02]">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#7A2CFF] animate-pulse" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#FF3CAC] animate-pulse" style={{ animationDelay: "150ms" }} />
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#00E0FF] animate-pulse" style={{ animationDelay: "300ms" }} />
-                  </div>
+                <div className="rounded-2xl rounded-tl-sm px-4 py-3.5 qubra-message-border pl-4 bg-white/[0.02]">
+                  <TypingIndicator />
                 </div>
               </div>
             </div>
@@ -297,12 +265,12 @@ export function ChatPanel({
 
       {/* Input */}
       <div className="px-6 sm:px-7 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-6 shrink-0">
-        <div className="relative bg-white/[0.03] rounded-2xl px-4 py-3 flex items-end gap-3">
+        <div className="relative bg-white/[0.03] rounded-2xl px-3 py-2.5 flex items-center gap-2">
           {/* Mic button */}
           <button
             onClick={toggleRecording}
             disabled={isLoading}
-            className={`relative flex-shrink-0 p-2 rounded-full transition-all ${
+            className={`relative flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all ${
               isRecording
                 ? "bg-red-500/20 text-red-400 animate-pulse"
                 : "text-white/30 hover:text-[#00E0FF] hover:bg-white/[0.05]"
@@ -325,16 +293,16 @@ export function ChatPanel({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={isRecording ? "Grabando..." : "Escribe tu respuesta..."}
-            className="flex-1 bg-transparent border-0 text-[15px] text-white placeholder:text-white/30 resize-none focus:outline-none py-1 leading-relaxed"
-            rows={2}
+            className="flex-1 bg-transparent border-0 text-[15px] text-white placeholder:text-white/30 resize-none focus:outline-none leading-relaxed self-center"
+            rows={1}
             disabled={isLoading || isRecording}
           />
           <button
             onClick={onSend}
             disabled={!input.trim() || isLoading || isRecording}
-            className="text-white/30 hover:text-[#00E0FF] disabled:opacity-30 disabled:hover:text-white/30 transition-colors pb-1"
+            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-white/30 hover:text-[#00E0FF] hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:text-white/30 disabled:hover:bg-transparent transition-all"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-[18px] h-[18px]" />
           </button>
         </div>
       </div>

@@ -129,6 +129,8 @@ Tu tono es *cercano, profesional, claro, estratégico, empático y auténtico*.
 ✅ Pedir y validar el correo antes de finalizar la sesión.
 ✅ Mantener el tono Vanguardista: humano, estratégico, artístico, inspirador y auténtico.
 
+❌ NUNCA hacer más de UNA pregunta por mensaje. Espera la respuesta del usuario antes de hacer la siguiente.
+❌ NUNCA listar múltiples preguntas de golpe. Solo una a la vez.
 ❌ Nunca dar un diagnóstico final dentro del chat.
 ❌ Nunca improvisar información que no esté en la documentación de Vanguardistas.
 ❌ Nunca terminar la conversación sin ofrecer el próximo paso (el informe).
@@ -179,28 +181,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Build SDK messages
-    const sdkMessages = rawMessages.map((m) => {
-      if (m.role === "user" && m.content === "__AUDIO__" && audioBuffer) {
+    const sdkMessages = rawMessages
+      .map((m) => {
+        if (m.role === "user" && m.content === "__AUDIO__" && audioBuffer) {
+          return {
+            role: "user" as const,
+            content: [
+              {
+                type: "text" as const,
+                text: "Escucha este mensaje de voz y responde como Qubra.",
+              },
+              {
+                type: "file" as const,
+                data: audioBuffer,
+                mediaType: audioMediaType,
+              },
+            ],
+          };
+        }
         return {
-          role: "user" as const,
-          content: [
-            {
-              type: "text" as const,
-              text: "Escucha este mensaje de voz y responde como Qubra.",
-            },
-            {
-              type: "file" as const,
-              data: audioBuffer,
-              mediaType: audioMediaType,
-            },
-          ],
+          role: m.role as "user" | "assistant",
+          content: m.content,
         };
-      }
-      return {
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      };
-    });
+      });
 
     const result = streamText({
       model: google("gemini-3.1-flash-lite-preview"),

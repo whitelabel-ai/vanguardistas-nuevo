@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+
+const STORAGE_KEY = "qubra-chat-messages";
 
 export interface LiveMessage {
   id: string;
@@ -31,15 +33,60 @@ export interface LiveAnalysis {
   }[];
 }
 
+const WELCOME_MESSAGE: LiveMessage = {
+  id: "welcome",
+  role: "assistant",
+  content: "¡Hola! Soy Qubra, tu consultor digital de Vanguardistas. Estoy aquí para ayudarte a detectar las fugas de tu marca y construir una estrategia que realmente funcione. ¿Cómo te llamas y a qué te dedicas?",
+  type: "text",
+};
+
 function toApiMessage(m: LiveMessage) {
   return { role: m.role, content: m.content };
+}
+
+function loadMessages(): LiveMessage[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+function saveMessages(messages: LiveMessage[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch {}
+}
+
+export function clearChatStorage() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 export function useChatStream() {
   const [messages, setMessages] = useState<LiveMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydration-safe: load messages after mount
+  useEffect(() => {
+    const saved = loadMessages();
+    if (saved.length > 0) {
+      setMessages(saved);
+    } else {
+      setMessages([WELCOME_MESSAGE]);
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    if (!hydrated) return;
+    saveMessages(messages);
+  }, [messages, hydrated]);
 
   const addMessage = useCallback((message: Omit<LiveMessage, "id">) => {
     const newMessage: LiveMessage = {
