@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 export function Header() {
   const pathname = usePathname();
 
+  const isLive = pathname === "/live";
+  const isLegacy = pathname === "/legacy";
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-md border-b border-white/5">
       <div className="max-w-[1430px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,27 +29,70 @@ export function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-4">
-            {pathname === "/" ? (
-              <Link href="/about">
-                <Button
-                  variant="gradient"
-                  size="sm"
-                  className="rounded-full px-6 font-medium"
-                >
-                  Nosotros
-                </Button>
-              </Link>
+          <nav className="flex items-center gap-3">
+            {isLive ? (
+              <>
+                <Link href="/about">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white/70 hover:text-white hover:bg-white/10"
+                  >
+                    Nosotros
+                  </Button>
+                </Link>
+                <Link href="/legacy">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground"
+                  >
+                    Versión Clásica
+                  </Button>
+                </Link>
+              </>
+            ) : isLegacy ? (
+              <>
+                <Link href="/live">
+                  <Button
+                    variant="gradient"
+                    size="sm"
+                    className="rounded-full px-6 font-medium"
+                  >
+                    Nuevo: Diagnóstico en Vivo
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white/70 hover:text-white hover:bg-white/10"
+                  >
+                    Nosotros
+                  </Button>
+                </Link>
+              </>
             ) : (
-              <Link href="/">
-                <Button
-                  variant="gradient"
-                  size="sm"
-                  className="rounded-full px-6 font-medium"
-                >
-                  Mi diagnóstico
-                </Button>
-              </Link>
+              <>
+                <Link href="/live">
+                  <Button
+                    variant="gradient"
+                    size="sm"
+                    className="rounded-full px-6 font-medium"
+                  >
+                    Diagnóstico en Vivo
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white/70 hover:text-white hover:bg-white/10"
+                  >
+                    Nosotros
+                  </Button>
+                </Link>
+              </>
             )}
           </nav>
         </div>
