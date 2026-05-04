@@ -125,6 +125,22 @@ export async function POST(request: NextRequest) {
       const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || text.match(/\{[\s\S]*\}/);
       const jsonStr = jsonMatch ? jsonMatch[1] || jsonMatch[0] : text;
       analysis = JSON.parse(jsonStr);
+
+      // ── Etapa determinística por progreso ──
+      // Garantiza que el usuario vea todas las etapas en secuencia
+      const progreso = Number(analysis.progreso) || 0;
+      let etapaForzada: string;
+      if (progreso <= 2) {
+        etapaForzada = "retratar";
+      } else if (progreso <= 5) {
+        etapaForzada = "descomponer";
+      } else if (progreso <= 7) {
+        etapaForzada = "reinterpretar";
+      } else {
+        etapaForzada = "completado";
+      }
+      analysis.etapa = etapaForzada;
+      analysis.completado = progreso >= 8;
     } catch {
       analysis = {
         etapa: "retratar",
