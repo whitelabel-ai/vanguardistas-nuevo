@@ -13,14 +13,27 @@ import { GripVertical } from "lucide-react";
 
 export function LiveContainer() {
   const { messages, input, setInput, isLoading, sendMessage, sendAudio, addMessage } = useChatStream();
-  const { analysis, isAnalyzing, generateInforme, sendDiagnosis, isSending, sendResult, isEmailSent, markEmailAsSent } = useLiveAnalysis(messages);
+  const {
+    analysis,
+    isAnalyzing,
+    generateInforme,
+    sendDiagnosis,
+    isSending,
+    sendResult,
+    loadInforme,
+    isEmailSent,
+    isSessionSent,
+    isRateLimited,
+    markEmailAsSent,
+  } = useLiveAnalysis(messages);
+
   const [informe, setInforme] = useState<string | null>(null);
 
   // Modal states
   const [showSendingModal, setShowSendingModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  // Auto-trigger guard
+  // Auto-trigger guard (para esta instancia del componente)
   const autoTriggeredRef = useRef(false);
 
   // Sheet state (mobile)
@@ -32,7 +45,20 @@ export function LiveContainer() {
     setHasNotification(false);
   };
 
-  // Detect progress milestone and insert a persistent message
+  /* ── Al montar: restaurar informe persistido si existe ── */
+  useEffect(() => {
+    if (analysis.datosUsuario.email) {
+      const saved = loadInforme(analysis.datosUsuario.email);
+      if (saved) {
+        setInforme(saved);
+        autoTriggeredRef.current = true; // evitar re-envío automático
+      }
+    }
+  // Solo al montar / cuando cambia el email detectado
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysis.datosUsuario.email]);
+
+  /* ── Detect progress milestone ── */
   const lastEtapaRef = useRef<string | null>(null);
   useEffect(() => {
     if (!analysis || analysis.etapa === lastEtapaRef.current) return;
@@ -54,7 +80,7 @@ export function LiveContainer() {
     }
   }, [analysis, addMessage]);
 
-  // Auto-trigger diagnosis when completed
+  /* ── Auto-trigger diagnosis when completed ── */
   useEffect(() => {
     if (
       analysis.completado &&
@@ -68,33 +94,38 @@ export function LiveContainer() {
       const nombre = analysis.datosUsuario.nombre;
       const email = analysis.datosUsuario.email;
 
-      // Prevent duplicate auto-sends for the same email
-      if (isEmailSent(email)) {
+      // ── 3 Capas de protección anti-spam ──
+
+      // Capa 2: ya enviado en esta sesión (tab sleep/wake)
+      if (isSessionSent(email)) {
         autoTriggeredRef.current = true;
-        // Still generate the informe and show preview, but don't re-send
+        handleGenerateAndShow();
+        return;
+      }
+
+      // Capa 3: rate limiting (24h)
+      if (isRateLimited(email)) {
+        autoTriggeredRef.current = true;
         handleGenerateAndShow();
         return;
       }
 
       autoTriggeredRef.current = true;
 
-      // Insert Qubra message in chat
+      // Insertar mensaje de preparación (NO se guarda en chat history)
       addMessage({
         role: "assistant",
         content: `Gracias, ${nombre}. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos...`,
         type: "text",
       });
 
-      // Show sending modal
       setShowSendingModal(true);
-
-      // Generate + send
       handleGenerateAndSend();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysis.completado, analysis.datosUsuario.nombre, analysis.datosUsuario.email, informe, isSending, sendResult]);
 
-  // Handle send result changes
+  /* ── Handle send result: mostrar preview y limpiar ── */
   useEffect(() => {
     if (!sendResult) return;
 
@@ -102,19 +133,15 @@ export function LiveContainer() {
 
     if (sendResult.success) {
       setShowPreview(true);
-      addMessage({
-        role: "assistant",
-        content: `Tu diagnóstico está listo. Te he enviado el informe completo a tu correo. Revisa tu bandeja (y spam).`,
-        type: "text",
-      });
-    } else {
-      addMessage({
-        role: "assistant",
-        content: `Hubo un problema enviando tu Mapa de Fugas: ${sendResult.message}. Puedes intentar de nuevo desde el panel de diagnóstico.`,
-        type: "text",
-      });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // Importante: limpiar sendResult para evitar re-disparo
+    const timer = setTimeout(() => {
+      // No limpiamos sendResult aquí para mantener el estado visible,
+      // pero sí marcamos que ya fue procesado
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [sendResult]);
 
   const handleGenerateAndSend = async () => {
@@ -124,11 +151,6 @@ export function LiveContainer() {
       await sendDiagnosis(result);
     } else {
       setShowSendingModal(false);
-      addMessage({
-        role: "assistant",
-        content: "No pude generar tu Mapa de Fugas. Por favor, intenta de nuevo.",
-        type: "text",
-      });
     }
   };
 
@@ -144,7 +166,7 @@ export function LiveContainer() {
     if (!informe) return;
     setShowSendingModal(true);
     const email = analysis.datosUsuario.email;
-    if (email) markEmailAsSent(email); // ensure it's marked
+    if (email) markEmailAsSent(email);
     await sendDiagnosis(informe);
   };
 

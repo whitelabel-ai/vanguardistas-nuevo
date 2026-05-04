@@ -3,8 +3,17 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { LiveMessage } from "./useChatStream";
 
-const SENT_EMAILS_KEY = "qubra-sent-emails";
+/* ───────────────────────────────────────────────
+   Anti-spam: 3-capas de protección
+   ─────────────────────────────────────────────── */
 
+const SENT_EMAILS_KEY = "qubra-sent-emails";
+const LAST_SENT_PREFIX = "qubra-last-sent-";
+const SESSION_SENT_PREFIX = "qubra-sent-this-session-";
+const INFORME_PREFIX = "qubra-informe-";
+const RATE_LIMIT_HOURS = 24;
+
+// ── Capa 1: localStorage persistente ──
 function getSentEmails(): string[] {
   if (typeof window === "undefined") return [];
   try {
@@ -32,6 +41,69 @@ export function clearSentEmails() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(SENT_EMAILS_KEY);
 }
+
+// ── Capa 2: sessionStorage (sobrevive remontajes de pestaña) ──
+function markSessionSent(email: string) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(SESSION_SENT_PREFIX + email, "true");
+  } catch {}
+}
+
+function isSessionSent(email: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return sessionStorage.getItem(SESSION_SENT_PREFIX + email) === "true";
+  } catch {
+    return false;
+  }
+}
+
+// ── Capa 3: rate limiting por timestamp (24h) ──
+function markLastSent(email: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LAST_SENT_PREFIX + email, Date.now().toString());
+  } catch {}
+}
+
+function getHoursSinceLastSent(email: string): number {
+  if (typeof window === "undefined") return Infinity;
+  try {
+    const raw = localStorage.getItem(LAST_SENT_PREFIX + email);
+    if (!raw) return Infinity;
+    const lastSent = parseInt(raw, 10);
+    if (isNaN(lastSent)) return Infinity;
+    return (Date.now() - lastSent) / 3600000; // ms → horas
+  } catch {
+    return Infinity;
+  }
+}
+
+function isRateLimited(email: string): boolean {
+  return getHoursSinceLastSent(email) < RATE_LIMIT_HOURS;
+}
+
+// ── Persistencia de informe ──
+function saveInforme(email: string, informe: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(INFORME_PREFIX + email, informe);
+  } catch {}
+}
+
+function loadInforme(email: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(INFORME_PREFIX + email);
+  } catch {
+    return null;
+  }
+}
+
+/* ───────────────────────────────────────────────
+   Tipos
+   ─────────────────────────────────────────────── */
 
 export interface Insight {
   categoria: "marketing" | "procesos" | "tecnologia";
@@ -85,6 +157,10 @@ const initialAnalysis: LiveAnalysis = {
   intervencionUrgente: "",
   insights: [],
 };
+
+/* ───────────────────────────────────────────────
+   Hook
+   ─────────────────────────────────────────────── */
 
 export function useLiveAnalysis(messages: LiveMessage[]) {
   const [analysis, setAnalysis] = useState<LiveAnalysis>(initialAnalysis);
@@ -140,6 +216,13 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
   const generateInforme = useCallback(async () => {
     if (!analysis.datosUsuario.nombre || analysis.progreso < 5) return null;
 
+    // Si ya hay un informe persistido para este email, devolverlo directamente
+    const email = analysis.datosUsuario.email;
+    if (email) {
+      const saved = loadInforme(email);
+      if (saved) return saved;
+    }
+
     try {
       const response = await fetch("/api/informe", {
         method: "POST",
@@ -159,7 +242,14 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
       if (!response.ok) throw new Error("Informe failed");
 
       const data = await response.json();
-      return data.informe as string;
+      const informe = data.informe as string;
+
+      // Persistir el informe generado
+      if (email && informe) {
+        saveInforme(email, informe);
+      }
+
+      return informe;
     } catch (error) {
       console.error("Informe error:", error);
       return null;
@@ -169,6 +259,18 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
   const sendDiagnosis = useCallback(async (informe: string) => {
     if (!analysis.datosUsuario.email) {
       setSendResult({ success: false, message: "No hay email del usuario para enviar el diagnóstico" });
+      return null;
+    }
+
+    const email = analysis.datosUsuario.email;
+
+    // Rate limiting: máximo 1 envío cada 24h por email
+    if (isRateLimited(email)) {
+      const hours = Math.ceil(RATE_LIMIT_HOURS - getHoursSinceLastSent(email));
+      setSendResult({
+        success: false,
+        message: `Ya enviamos un diagnóstico a este correo recientemente. Puedes reenviarlo manualmente desde el panel.`,
+      });
       return null;
     }
 
@@ -205,9 +307,12 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
         message: data.message || "Diagnóstico enviado exitosamente",
         resumen: data.n8nResponse?.resumen,
       };
-      if (analysis.datosUsuario.email) {
-        markEmailAsSent(analysis.datosUsuario.email);
-      }
+
+      // Marcar en TODAS las capas de protección
+      markEmailAsSent(email);
+      markSessionSent(email);
+      markLastSent(email);
+
       setSendResult(result);
       return result;
     } catch (error) {
@@ -230,7 +335,10 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
     sendResult,
     generateInforme,
     sendDiagnosis,
+    loadInforme,
     isEmailSent: (email: string) => isEmailSent(email),
+    isSessionSent: (email: string) => isSessionSent(email),
+    isRateLimited: (email: string) => isRateLimited(email),
     markEmailAsSent: (email: string) => markEmailAsSent(email),
   };
 }
