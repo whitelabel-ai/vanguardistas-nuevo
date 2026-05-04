@@ -3,6 +3,19 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { LiveMessage } from "./useChatStream";
 
+export interface Insight {
+  categoria: "marketing" | "procesos" | "tecnologia";
+  titulo: string;
+  descripcion: string;
+  icono: string;
+}
+
+export interface Scores {
+  marketing: number;
+  experiencia: number;
+  global: number;
+}
+
 export interface LiveAnalysis {
   etapa: "retratar" | "descomponer" | "reinterpretar" | "completado";
   progreso: number;
@@ -13,12 +26,19 @@ export interface LiveAnalysis {
     email: string | null;
   };
   respuestas: Record<string, string>;
-  insights: {
-    categoria: "marketing" | "procesos" | "tecnologia";
-    titulo: string;
-    descripcion: string;
-    icono: string;
-  }[];
+  camino: "A" | "B" | null;
+  scores: Scores;
+  nivel: 1 | 2 | 3 | null;
+  esClientePotencial: boolean;
+  fugaPrincipal: string;
+  intervencionUrgente: string;
+  insights: Insight[];
+}
+
+export interface SendDiagnosisResult {
+  success: boolean;
+  message: string;
+  resumen?: string;
 }
 
 const initialAnalysis: LiveAnalysis = {
@@ -27,12 +47,20 @@ const initialAnalysis: LiveAnalysis = {
   completado: false,
   datosUsuario: { nombre: null, empresa: null, email: null },
   respuestas: {},
+  camino: null,
+  scores: { marketing: 0, experiencia: 0, global: 0 },
+  nivel: null,
+  esClientePotencial: false,
+  fugaPrincipal: "",
+  intervencionUrgente: "",
   insights: [],
 };
 
 export function useLiveAnalysis(messages: LiveMessage[]) {
   const [analysis, setAnalysis] = useState<LiveAnalysis>(initialAnalysis);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendResult, setSendResult] = useState<SendDiagnosisResult | null>(null);
   const lastAnalyzedCount = useRef(0);
 
   const analyze = useCallback(async () => {
@@ -71,7 +99,6 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
     }
   }, [messages]);
 
-  // Analyze every time messages change, but debounced
   useEffect(() => {
     const timeout = setTimeout(() => {
       analyze();
@@ -90,6 +117,12 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
         body: JSON.stringify({
           userData: analysis.datosUsuario,
           respuestas: analysis.respuestas,
+          camino: analysis.camino,
+          scores: analysis.scores,
+          nivel: analysis.nivel,
+          esClientePotencial: analysis.esClientePotencial,
+          fugaPrincipal: analysis.fugaPrincipal,
+          intervencionUrgente: analysis.intervencionUrgente,
         }),
       });
 
@@ -103,9 +136,66 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
     }
   }, [analysis]);
 
+  const sendDiagnosis = useCallback(async (informe: string) => {
+    if (!analysis.datosUsuario.email) {
+      setSendResult({ success: false, message: "No hay email del usuario para enviar el diagnóstico" });
+      return null;
+    }
+
+    setIsSending(true);
+    setSendResult(null);
+
+    try {
+      const response = await fetch("/api/send-diagnosis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userData: analysis.datosUsuario,
+          respuestas: analysis.respuestas,
+          informe,
+          camino: analysis.camino,
+          scores: analysis.scores,
+          nivel: analysis.nivel,
+          esClientePotencial: analysis.esClientePotencial,
+          fugaPrincipal: analysis.fugaPrincipal,
+          intervencionUrgente: analysis.intervencionUrgente,
+          sector: analysis.respuestas["P4"] || "",
+          queVenden: analysis.respuestas["P3"] || "",
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Error desconocido" }));
+        throw new Error(errorData.error || "Error enviando diagnóstico");
+      }
+
+      const data = await response.json();
+      const result: SendDiagnosisResult = {
+        success: true,
+        message: data.message || "Diagnóstico enviado exitosamente",
+        resumen: data.n8nResponse?.resumen,
+      };
+      setSendResult(result);
+      return result;
+    } catch (error) {
+      console.error("Send diagnosis error:", error);
+      const result: SendDiagnosisResult = {
+        success: false,
+        message: error instanceof Error ? error.message : "Error enviando diagnóstico",
+      };
+      setSendResult(result);
+      return result;
+    } finally {
+      setIsSending(false);
+    }
+  }, [analysis]);
+
   return {
     analysis,
     isAnalyzing,
+    isSending,
+    sendResult,
     generateInforme,
+    sendDiagnosis,
   };
 }

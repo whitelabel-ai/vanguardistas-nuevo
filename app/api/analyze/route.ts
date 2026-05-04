@@ -12,49 +12,67 @@ const analyzeSchema = z.object({
   ),
 });
 
-const analyzePrompt = `Eres un analizador de diagnóstico empresarial para Vanguardistas.
+const analyzePrompt = `Eres Qubra, el analizador de diagnóstico empresarial de Vanguardistas.
 
-Analiza esta conversación entre un usuario y el agente Qubra. Tu trabajo es:
+Analiza esta conversación entre un usuario y Qubra. Extrae toda la información relevante y evalúa cada respuesta.
 
-1. EXTRAER las respuestas del usuario a estas 10 preguntas clave del diagnóstico:
-   - ¿Qué es lo que te inspira a trabajar cada día?
-   - ¿Qué vendes y a qué sector te diriges?
-   - ¿Qué emociones quieres que tu marca transmita a tus clientes?
-   - ¿Cuál es el principal problema que enfrentas con respecto a tus ventas hoy?
-   - ¿Hasta qué punto conoces a profundidad a tu cliente ideal y el problema específico que tu marca/empresa resuelve para ellos?
-   - ¿Cómo describirías la experiencia que tus clientes viven al interactuar con tu marca?
-   - ¿Qué tan visible eres a nivel digital?
-   - ¿Qué objetivo refleja mejor lo que quieres lograr con tu marca a nivel digital?
-   - ¿Cuáles son los recursos existentes que cuentas actualmente para mejorar tu presencia digital?
-   - Cuando mires atrás, ¿qué te hará sentir que este proceso ha sido un éxito para tu negocio?
+## Tu trabajo:
 
-2. DETECTAR la etapa actual de la conversación:
-   - "retratar": cuando Qubra está haciendo las primeras 3 preguntas (inspiración, qué vende, emociones)
-   - "descomponer": cuando Qubra está haciendo las 4 preguntas de problemas
-   - "reinterpretar": cuando Qubra está haciendo las 3 últimas preguntas de futuro
-   - "completado": cuando Qubra ha confirmado el email y está cerrando
+1. EXTRAER las respuestas del usuario a las 8 preguntas del diagnóstico:
+   - P1 (Filtro): ¿Cuál es el síntoma que más te duele? (A=Invisibilidad, B=Fricción)
+   - P2 (Identidad): Nombre y correo del usuario
+   - P3 (Origen o Problema): Según camino A o B
+   - P4 (Nicho o Proceso): Según camino A o B
+   - P5 (Meta): Según camino A o B
+   - P6 (Sitio Web): URL o "no tengo"
+   - P7 (Equipo): Tamaño del equipo
+   - P8 (Diferencial): Valor único
 
-3. GENERAR insights visuales (máximo 3 por categoría):
-   Para cada insight, indica:
+2. EVALUAR cada respuesta en escala 1-10:
+   - 1-4: Respuestas como "No sé", "No tengo", "Manual", "Referidos solamente", "A todo el mundo"
+   - 5-7: Algo implementado pero inconsistente o empírico
+   - 8-10: Claridad absoluta, procesos claros, herramientas de medición
+
+3. CALCULAR ÍNDICES:
+   - Si camino A (Invisibilidad):
+     - marketing_score = promedio(P3, P4, P5, P6, P7)
+     - experiencia_score = estimado basado en P6, P7, P8 (o 5 por defecto si no hay datos)
+   - Si camino B (Fricción):
+     - experiencia_score = promedio(P3, P4, P5, P6, P7)
+     - marketing_score = estimado basado en P6, P7, P8 (o 5 por defecto)
+   - global_score = ((marketing_score + experiencia_score) / 2) * 10
+
+4. DETERMINAR NIVEL:
+   - Nivel 1 (0-40): "El Lienzo en Blanco" — Fuga Alta
+   - Nivel 2 (41-70): "El Impresionista Difuso" — Fuga Media
+   - Nivel 3 (71-100): "El Visionario Encerrado" — Fuga Baja
+
+5. DETECTAR CLIENTE POTENCIAL:
+   - true si P7 indica más de 5 personas en el equipo
+
+6. DETERMINAR FUGA PRINCIPAL e INTERVENCIÓN URGENTE:
+   - Si marketing_score < 5: fuga_principal = "Invisibilidad Selectiva", intervencion = "Boceto de Atracción"
+   - Si experiencia_score < 5: fuga_principal = "Fricción en el Proceso", intervencion = "Restauración de Proceso"
+   - Si ambos >= 5: fuga_principal = "Techo de Cristal", intervencion = "Expansión de Galería"
+
+7. GENERAR insights (máx 3):
    - categoria: "marketing" | "procesos" | "tecnologia"
    - titulo: máx 5 palabras
-   - descripcion: 1-2 oraciones con el hallazgo clave
-   - icono: uno de estos emojis según la categoría: 🎯 (marketing), ⚡ (procesos), 💻 (tecnología)
+   - descripcion: 1-2 oraciones
+   - icono: 🎨 (marketing), ⚡ (procesos), 🖼️ (tecnologia)
 
-4. DETECTAR datos del usuario:
-   - nombre
-   - empresa
-   - email (si lo ha proporcionado)
+8. DETECTAR datos del usuario:
+   - nombre, empresa, email
 
-5. INDICAR progreso: número del 0 al 10 de preguntas respondidas
+9. INDICAR progreso: 0-8 (número de preguntas respondidas)
 
-6. INDICAR si está completo: true/false
+10. INDICAR si está completo: true/false
 
 Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
 
 {
   "etapa": "retratar|descomponer|reinterpretar|completado",
-  "progreso": 0-10,
+  "progreso": 0-8,
   "completado": true|false,
   "datosUsuario": {
     "nombre": string|null,
@@ -62,8 +80,20 @@ Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
     "email": string|null
   },
   "respuestas": {
-    "pregunta": "respuesta del usuario"
+    "P1": "A o B",
+    "P2": "nombre y email",
+    ...
   },
+  "camino": "A|B|null",
+  "scores": {
+    "marketing": 0-10,
+    "experiencia": 0-10,
+    "global": 0-100
+  },
+  "nivel": 1|2|3|null,
+  "esClientePotencial": true|false,
+  "fugaPrincipal": string,
+  "intervencionUrgente": string,
   "insights": [
     {
       "categoria": "marketing|procesos|tecnologia",
@@ -90,10 +120,8 @@ export async function POST(request: NextRequest) {
       temperature: 0.3,
     });
 
-    // Parsear el JSON de la respuesta
     let analysis;
     try {
-      // Intentar extraer JSON si está envuelto en markdown
       const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || text.match(/\{[\s\S]*\}/);
       const jsonStr = jsonMatch ? jsonMatch[1] || jsonMatch[0] : text;
       analysis = JSON.parse(jsonStr);
@@ -104,6 +132,12 @@ export async function POST(request: NextRequest) {
         completado: false,
         datosUsuario: { nombre: null, empresa: null, email: null },
         respuestas: {},
+        camino: null,
+        scores: { marketing: 0, experiencia: 0, global: 0 },
+        nivel: null,
+        esClientePotencial: false,
+        fugaPrincipal: "",
+        intervencionUrgente: "",
         insights: [],
       };
     }
@@ -111,8 +145,6 @@ export async function POST(request: NextRequest) {
     return Response.json(analysis);
   } catch (error: any) {
     console.error("Analyze error:", error);
-    console.error("Error message:", error?.message);
-    console.error("Error cause:", error?.cause);
     return Response.json(
       {
         etapa: "retratar",
@@ -120,6 +152,12 @@ export async function POST(request: NextRequest) {
         completado: false,
         datosUsuario: { nombre: null, empresa: null, email: null },
         respuestas: {},
+        camino: null,
+        scores: { marketing: 0, experiencia: 0, global: 0 },
+        nivel: null,
+        esClientePotencial: false,
+        fugaPrincipal: "",
+        intervencionUrgente: "",
         insights: [],
         _error: error?.message || "Unknown error",
       },

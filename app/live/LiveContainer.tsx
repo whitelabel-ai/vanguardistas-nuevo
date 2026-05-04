@@ -7,32 +7,30 @@ import { useLiveAnalysis } from "./hooks/useLiveAnalysis";
 import { AnalysisPanel } from "./components/AnalysisPanel";
 import { ChatPanel } from "./components/ChatPanel";
 import { AnalysisSheet } from "./components/AnalysisSheet";
+import { SendingModal } from "./components/SendingModal";
+import { DiagnosisPreview } from "./components/DiagnosisPreview";
 import { GripVertical } from "lucide-react";
-
-const etapaLabels: Record<string, string> = {
-  retratar: "Retratar",
-  descomponer: "Descomponer",
-  reinterpretar: "Reinterpretar",
-  completado: "Completado",
-};
 
 export function LiveContainer() {
   const { messages, input, setInput, isLoading, sendMessage, sendAudio, addMessage } = useChatStream();
-  const { analysis, isAnalyzing, generateInforme } = useLiveAnalysis(messages);
+  const { analysis, isAnalyzing, generateInforme, sendDiagnosis, isSending, sendResult } = useLiveAnalysis(messages);
   const [informe, setInforme] = useState<string | null>(null);
 
-  // Sheet state
+  // Modal states
+  const [showSendingModal, setShowSendingModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  // Auto-trigger guard
+  const autoTriggeredRef = useRef(false);
+
+  // Sheet state (mobile)
   const [sheetState, setSheetState] = useState<"hidden" | "collapsed" | "half" | "full">("hidden");
-  
-  // Notification badge on bubble
   const [hasNotification, setHasNotification] = useState(false);
 
   const openSheet = () => {
     setSheetState("half");
     setHasNotification(false);
   };
-  
-  const closeSheet = () => setSheetState("hidden");
 
   // Detect progress milestone and insert a persistent message
   const lastEtapaRef = useRef<string | null>(null);
@@ -43,7 +41,6 @@ export function LiveContainer() {
     lastEtapaRef.current = analysis.etapa;
 
     if (prev && prev !== analysis.etapa) {
-      // Insert progress message into chat history
       addMessage({
         role: "assistant",
         content: `__PROGRESS__:${analysis.etapa}:${analysis.progreso}`,
@@ -56,6 +53,81 @@ export function LiveContainer() {
       setHasNotification(true);
     }
   }, [analysis, addMessage]);
+
+  // Auto-trigger diagnosis when completed
+  useEffect(() => {
+    if (
+      analysis.completado &&
+      analysis.datosUsuario.nombre &&
+      analysis.datosUsuario.email &&
+      !informe &&
+      !autoTriggeredRef.current &&
+      !isSending &&
+      !sendResult
+    ) {
+      autoTriggeredRef.current = true;
+
+      const nombre = analysis.datosUsuario.nombre;
+      const email = analysis.datosUsuario.email;
+
+      // Insert Qubra message in chat
+      addMessage({
+        role: "assistant",
+        content: `Gracias, ${nombre}. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos...`,
+        type: "text",
+      });
+
+      // Show sending modal
+      setShowSendingModal(true);
+
+      // Generate + send
+      handleGenerateAndSend();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysis.completado, analysis.datosUsuario.nombre, analysis.datosUsuario.email, informe, isSending, sendResult]);
+
+  // Handle send result changes
+  useEffect(() => {
+    if (!sendResult) return;
+
+    setShowSendingModal(false);
+
+    if (sendResult.success) {
+      setShowPreview(true);
+      addMessage({
+        role: "assistant",
+        content: `Tu diagnóstico está listo. Te he enviado el informe completo a tu correo. Revisa tu bandeja (y spam).`,
+        type: "text",
+      });
+    } else {
+      addMessage({
+        role: "assistant",
+        content: `Hubo un problema enviando tu Mapa de Fugas: ${sendResult.message}. Puedes intentar de nuevo desde el panel de diagnóstico.`,
+        type: "text",
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendResult]);
+
+  const handleGenerateAndSend = async () => {
+    const result = await generateInforme();
+    if (result) {
+      setInforme(result);
+      await sendDiagnosis(result);
+    } else {
+      setShowSendingModal(false);
+      addMessage({
+        role: "assistant",
+        content: "No pude generar tu Mapa de Fugas. Por favor, intenta de nuevo.",
+        type: "text",
+      });
+    }
+  };
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    sendMessage(input);
+  };
 
   const [split, setSplit] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -95,21 +167,30 @@ export function LiveContainer() {
     };
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    sendMessage(input);
-  };
-
-  const handleGenerateInforme = async () => {
-    const result = await generateInforme();
-    if (result) {
-      setInforme(result);
-    }
-    return result;
-  };
-
   return (
     <div className="h-[calc(100dvh-5rem)] mt-20 flex mesh-gradient-bg-v2 relative p-3 sm:p-4 lg:p-5">
+      {/* Sending Modal */}
+      <SendingModal
+        isOpen={showSendingModal}
+        nombre={analysis.datosUsuario.nombre}
+      />
+
+      {/* Diagnosis Preview Full Screen */}
+      {informe && (
+        <DiagnosisPreview
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          nombre={analysis.datosUsuario.nombre || "Estimado"}
+          informe={informe}
+          scores={analysis.scores}
+          nivel={analysis.nivel}
+          camino={analysis.camino}
+          esClientePotencial={analysis.esClientePotencial}
+          fugaPrincipal={analysis.fugaPrincipal}
+          intervencionUrgente={analysis.intervencionUrgente}
+        />
+      )}
+
       {/* Desktop: resizable side-by-side with floating panels */}
       <div
         ref={containerRef}
@@ -123,8 +204,11 @@ export function LiveContainer() {
           <AnalysisPanel
             analysis={analysis}
             isAnalyzing={isAnalyzing}
-            onGenerateInforme={handleGenerateInforme}
             informe={informe}
+            isSending={isSending}
+            sendResult={sendResult}
+            onRetrySend={sendDiagnosis}
+            onOpenPreview={() => setShowPreview(true)}
           />
         </div>
 
@@ -180,10 +264,13 @@ export function LiveContainer() {
           setSheetState={setSheetState}
           analysis={analysis}
           isAnalyzing={isAnalyzing}
-          onGenerateInforme={handleGenerateInforme}
           informe={informe}
           hasNotification={hasNotification}
           onOpen={openSheet}
+          isSending={isSending}
+          sendResult={sendResult}
+          onRetrySend={sendDiagnosis}
+          onOpenPreview={() => setShowPreview(true)}
         />
       </div>
     </div>

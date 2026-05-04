@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnalysisPanel } from "./AnalysisPanel";
-import { LiveAnalysis } from "../hooks/useLiveAnalysis";
-import { ChevronUp, ChevronDown, X, Activity } from "lucide-react";
+import { LiveAnalysis, SendDiagnosisResult } from "../hooks/useLiveAnalysis";
+import { ChevronUp, ChevronDown, X } from "lucide-react";
 
 type SheetState = "hidden" | "collapsed" | "half" | "full";
 
@@ -13,10 +13,13 @@ interface AnalysisSheetProps {
   setSheetState: (s: SheetState) => void;
   analysis: LiveAnalysis;
   isAnalyzing: boolean;
-  onGenerateInforme: () => Promise<string | null>;
   informe: string | null;
   hasNotification?: boolean;
   onOpen?: () => void;
+  isSending?: boolean;
+  sendResult?: SendDiagnosisResult | null;
+  onRetrySend?: (informe: string) => Promise<SendDiagnosisResult | null>;
+  onOpenPreview?: () => void;
 }
 
 const heightMap: Record<SheetState, string> = {
@@ -38,10 +41,13 @@ export function AnalysisSheet({
   setSheetState,
   analysis,
   isAnalyzing,
-  onGenerateInforme,
   informe,
   hasNotification,
   onOpen,
+  isSending,
+  sendResult,
+  onRetrySend,
+  onOpenPreview,
 }: AnalysisSheetProps) {
   const cycleState = () => {
     if (sheetState === "hidden") setSheetState("half");
@@ -187,8 +193,11 @@ export function AnalysisSheet({
           <AnalysisPanel
             analysis={analysis}
             isAnalyzing={isAnalyzing}
-            onGenerateInforme={onGenerateInforme}
             informe={informe}
+            isSending={isSending}
+            sendResult={sendResult}
+            onRetrySend={onRetrySend}
+            onOpenPreview={onOpenPreview}
           />
         </div>
       </motion.div>
