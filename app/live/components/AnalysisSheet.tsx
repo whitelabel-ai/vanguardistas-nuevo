@@ -19,6 +19,7 @@ interface AnalysisSheetProps {
   isSending?: boolean;
   sendResult?: SendDiagnosisResult | null;
   onRetrySend?: (informe: string) => Promise<SendDiagnosisResult | null>;
+  onResend?: () => Promise<void>;
   onOpenPreview?: () => void;
 }
 
@@ -47,6 +48,7 @@ export function AnalysisSheet({
   isSending,
   sendResult,
   onRetrySend,
+  onResend,
   onOpenPreview,
 }: AnalysisSheetProps) {
   const cycleState = () => {
@@ -197,6 +199,7 @@ export function AnalysisSheet({
             isSending={isSending}
             sendResult={sendResult}
             onRetrySend={onRetrySend}
+            onResend={onResend}
             onOpenPreview={onOpenPreview}
           />
         </div>

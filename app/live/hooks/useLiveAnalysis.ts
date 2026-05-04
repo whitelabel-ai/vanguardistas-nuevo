@@ -3,6 +3,36 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { LiveMessage } from "./useChatStream";
 
+const SENT_EMAILS_KEY = "qubra-sent-emails";
+
+function getSentEmails(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(SENT_EMAILS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+function markEmailAsSent(email: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getSentEmails();
+    if (!existing.includes(email)) {
+      localStorage.setItem(SENT_EMAILS_KEY, JSON.stringify([...existing, email]));
+    }
+  } catch {}
+}
+
+function isEmailSent(email: string): boolean {
+  return getSentEmails().includes(email);
+}
+
+export function clearSentEmails() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(SENT_EMAILS_KEY);
+}
+
 export interface Insight {
   categoria: "marketing" | "procesos" | "tecnologia";
   titulo: string;
@@ -175,6 +205,9 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
         message: data.message || "Diagnóstico enviado exitosamente",
         resumen: data.n8nResponse?.resumen,
       };
+      if (analysis.datosUsuario.email) {
+        markEmailAsSent(analysis.datosUsuario.email);
+      }
       setSendResult(result);
       return result;
     } catch (error) {
@@ -197,5 +230,7 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
     sendResult,
     generateInforme,
     sendDiagnosis,
+    isEmailSent: (email: string) => isEmailSent(email),
+    markEmailAsSent: (email: string) => markEmailAsSent(email),
   };
 }

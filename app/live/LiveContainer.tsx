@@ -13,7 +13,7 @@ import { GripVertical } from "lucide-react";
 
 export function LiveContainer() {
   const { messages, input, setInput, isLoading, sendMessage, sendAudio, addMessage } = useChatStream();
-  const { analysis, isAnalyzing, generateInforme, sendDiagnosis, isSending, sendResult } = useLiveAnalysis(messages);
+  const { analysis, isAnalyzing, generateInforme, sendDiagnosis, isSending, sendResult, isEmailSent, markEmailAsSent } = useLiveAnalysis(messages);
   const [informe, setInforme] = useState<string | null>(null);
 
   // Modal states
@@ -65,10 +65,18 @@ export function LiveContainer() {
       !isSending &&
       !sendResult
     ) {
-      autoTriggeredRef.current = true;
-
       const nombre = analysis.datosUsuario.nombre;
       const email = analysis.datosUsuario.email;
+
+      // Prevent duplicate auto-sends for the same email
+      if (isEmailSent(email)) {
+        autoTriggeredRef.current = true;
+        // Still generate the informe and show preview, but don't re-send
+        handleGenerateAndShow();
+        return;
+      }
+
+      autoTriggeredRef.current = true;
 
       // Insert Qubra message in chat
       addMessage({
@@ -122,6 +130,22 @@ export function LiveContainer() {
         type: "text",
       });
     }
+  };
+
+  const handleGenerateAndShow = async () => {
+    const result = await generateInforme();
+    if (result) {
+      setInforme(result);
+      setShowPreview(true);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!informe) return;
+    setShowSendingModal(true);
+    const email = analysis.datosUsuario.email;
+    if (email) markEmailAsSent(email); // ensure it's marked
+    await sendDiagnosis(informe);
   };
 
   const handleSend = () => {
@@ -208,6 +232,7 @@ export function LiveContainer() {
             isSending={isSending}
             sendResult={sendResult}
             onRetrySend={sendDiagnosis}
+            onResend={handleResend}
             onOpenPreview={() => setShowPreview(true)}
           />
         </div>
@@ -270,6 +295,7 @@ export function LiveContainer() {
           isSending={isSending}
           sendResult={sendResult}
           onRetrySend={sendDiagnosis}
+          onResend={handleResend}
           onOpenPreview={() => setShowPreview(true)}
         />
       </div>

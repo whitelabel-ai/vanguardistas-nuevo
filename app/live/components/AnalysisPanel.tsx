@@ -15,6 +15,7 @@ interface AnalysisPanelProps {
   isSending?: boolean;
   sendResult?: SendDiagnosisResult | null;
   onRetrySend?: (informe: string) => Promise<SendDiagnosisResult | null>;
+  onResend?: () => Promise<void>;
   onOpenPreview?: () => void;
 }
 
@@ -99,6 +100,7 @@ export function AnalysisPanel({
   isSending,
   sendResult,
   onRetrySend,
+  onResend,
   onOpenPreview,
 }: AnalysisPanelProps) {
   const handleRetry = async () => {
@@ -307,6 +309,23 @@ export function AnalysisPanel({
                       <BarChart3 className="w-4 h-4" />
                       Ver diagnóstico completo
                       <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  )}
+
+                  {/* Botón Reenviar */}
+                  {onResend && (
+                    <Button
+                      onClick={onResend}
+                      disabled={isSending}
+                      variant="outline"
+                      className="w-full h-11 border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.04] hover:border-white/[0.15] rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-2"
+                    >
+                      {isSending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Mail className="w-4 h-4" />
+                      )}
+                      {isSending ? "Reenviando..." : "Reenviar al correo"}
                     </Button>
                   )}
 
