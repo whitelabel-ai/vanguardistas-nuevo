@@ -79,10 +79,23 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
 
 8. DETECTAR datos del usuario:
     - nombre, empresa, email
+    - REGLA CRÍTICA DEL EMAIL: si el usuario menciona varios correos a lo largo
+      de la conversación (corrige un typo, dice "ah, mejor envíalo a otro"),
+      devuelve SIEMPRE el ÚLTIMO correo válido mencionado por el usuario,
+      nunca el primero. Lo mismo para nombre y empresa cuando se corrigen.
 
 9. INDICAR progreso: 0-10 (número de preguntas respondidas)
+   - Cuenta una pregunta como respondida SOLO si el usuario ya escribió su
+     respuesta para esa pregunta específica. Si Qubra acaba de hacer la
+     pregunta y el usuario aún no responde, NO la cuentes.
+   - P8 (Sitio web): "no tengo", "ninguno", "aún no" cuentan como respondida.
+     Una URL incompleta o el usuario diciendo "espera, déjame buscarlo" NO
+     cuenta hasta que confirme el dato.
+   - P10 (Diferencial): respuestas cortas como "calidad", "atención" cuentan.
+     Si el usuario dice "no sé" cuenta como respondida.
 
-10. INDICAR si está completo: true/false (true solo si progreso >= 10)
+10. INDICAR si está completo: true/false (true SOLO si progreso == 10 Y las
+    10 keys P1..P10 tienen valor no vacío en respuestas).
 
 Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
 
@@ -153,13 +166,28 @@ export async function POST(request: NextRequest) {
         etapaForzada = "retratar";
       } else if (progreso <= 5) {
         etapaForzada = "descomponer";
-      } else if (progreso <= 7) {
+      } else if (progreso <= 8) {
         etapaForzada = "reinterpretar";
       } else {
         etapaForzada = "completado";
       }
       analysis.etapa = etapaForzada;
-      analysis.completado = progreso >= 8;
+
+      // ── Cierre estricto: solo cuando las 10 preguntas tienen respuesta ──
+      // Antes usábamos `progreso >= 8` como salvaguarda contra que Gemini
+      // no contara P8/P10, pero eso disparaba el diagnóstico mientras el
+      // usuario aún estaba respondiendo. Ahora exigimos las 10 keys con
+      // valor no vacío para evitar cierres prematuros.
+      const respuestasObj =
+        analysis.respuestas && typeof analysis.respuestas === "object"
+          ? (analysis.respuestas as Record<string, unknown>)
+          : {};
+      const requiredKeys = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10"];
+      const allAnswered = requiredKeys.every((k) => {
+        const v = respuestasObj[k];
+        return typeof v === "string" && v.trim().length > 0;
+      });
+      analysis.completado = progreso >= 10 && allAnswered;
     } catch {
       analysis = {
         etapa: "retratar",
