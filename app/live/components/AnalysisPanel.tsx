@@ -365,7 +365,7 @@ export function AnalysisPanel({
       <div className="px-6 sm:px-7 lg:px-8 xl:px-10 py-3 sm:py-4 shrink-0">
         <div className="flex items-center justify-between text-[11px] sm:text-xs text-white/30">
           <span>{isAnalyzing ? "Escaneando..." : "Sistema activo"}</span>
-          <span>{analysis.progreso} de 8 señales</span>
+          <span>{analysis.progreso} de 10 señales</span>
         </div>
       </div>
     </div>

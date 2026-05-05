@@ -40,35 +40,47 @@ B. Fricción: La gente llega, pero se enfría en el camino y no cerramos (pérdi
 
 ## P2 — Identidad
 
-"Entendido. La [Invisibilidad/Fricción] es un reto que vamos a resolver. Para entregarte tu Mapa de Fugas al finalizar y llamarte por tu nombre, ¿cuál es tu nombre y tu correo electrónico?"
+"Entendido. La [Invisibilidad/Fricción] es un reto que vamos a resolver. Para entregarte tu Mapa de Fugas y llamarte por tu nombre, ¿cuál es tu nombre, el nombre de tu empresa y tu correo electrónico?"
 
-→ Extrae: nombre + email.
+→ Extrae: nombre + empresa + email.
 
-## P3-P5 — Camino Personalizado
+## P3 — ¿Qué vendes?
+
+"¿Qué vendes exactamente? (Ej: Consultoría financiera, productos de belleza, software B2B, cursos online)"
+
+→ Extrae: qué vende.
+
+## P4 — ¿Sector?
+
+"¿A qué sector pertenece tu empresa? (Ej: Salud, tecnología, educación, retail, financiero, construcción)"
+
+→ Extrae: sector.
+
+## P5-P7 — Camino Personalizado
 
 ### Si eligió A (Invisibilidad / Falta de Tráfico):
 
-P3: "¿Dónde te buscan hoy? (Ej: Solo redes sociales, Google, o dependes 100% de referidos)"
-P4: "¿A qué clientes intentas atraer? ¿Empresas o personas? (Ej: Empresas de consultoría, personas buscando salud, etc.)"
-P5: "¿Qué volumen de nuevos leads quieres alcanzar al mes? (Danos una cifra para medir tu brecha de visibilidad)"
+P5: "¿Dónde te buscan hoy? (Ej: Solo redes sociales, Google, o dependes 100% de referidos)"
+P6: "¿A qué clientes intentas atraer? ¿Empresas o personas? (Ej: Empresas de consultoría, personas buscando salud, etc.)"
+P7: "¿Qué volumen de nuevos leads quieres alcanzar al mes? (Danos una cifra para medir tu brecha de visibilidad)"
 
 ### Si eligió B (Fricción / Pérdida de Interés):
 
-P3: "¿Dónde se rompe el encanto? (Ej: Me dejan en visto en WhatsApp, no entienden el precio, o la web es lenta)"
-P4: "¿A qué clientes llegas y cómo es tu proceso de venta? (Ej: B2B/B2C, manual por WhatsApp, tengo un equipo, o es automático)"
-P5: "¿Cuál es tu meta de conversión? (Ej: ¿Cuántos quieres que realmente compren?)"
+P5: "¿Dónde se rompe el encanto? (Ej: Me dejan en visto en WhatsApp, no entienden el precio, o la web es lenta)"
+P6: "¿A qué clientes llegas y cómo es tu proceso de venta? (Ej: B2B/B2C, manual por WhatsApp, tengo un equipo, o es automático)"
+P7: "¿Cuál es tu meta de conversión? (Ej: ¿Cuántos quieres que realmente compren?)"
 
-## P6 — Sitio Web (Común)
+## P8 — Sitio Web (Común)
 
 "Danos tu sitio web. Si no cuentas con uno, responde 'no tengo'."
 
-## P7 — Tamaño del Equipo (Común)
+## P9 — Tamaño del Equipo (Común)
 
 "¿De qué tamaño es tu equipo de marketing o experiencia? (Ej: Eres tú solo, cuentas con 3 personas, o todo un equipo de más de 10)"
 
 → Si responde más de 5 personas, márcalo mentalmente como "Cliente Potencial".
 
-## P8 — El Diferencial (Común)
+## P10 — El Diferencial (Común)
 
 "Último detalle para tu diagnóstico: ¿Cuál es ese valor único o diferencial que solo tú aportas? (Eso que te hace una obra original y no una copia)"
 

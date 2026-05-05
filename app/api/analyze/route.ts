@@ -18,15 +18,17 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
 
 ## Tu trabajo:
 
-1. EXTRAER las respuestas del usuario a las 8 preguntas del diagnóstico:
+1. EXTRAER las respuestas del usuario a las 10 preguntas del diagnóstico:
    - P1 (Filtro): ¿Cuál es el síntoma que más te duele? (A=Invisibilidad, B=Fricción)
-   - P2 (Identidad): Nombre y correo del usuario
-   - P3 (Origen o Problema): Según camino A o B
-   - P4 (Nicho o Proceso): Según camino A o B
-   - P5 (Meta): Según camino A o B
-   - P6 (Sitio Web): URL o "no tengo"
-   - P7 (Equipo): Tamaño del equipo
-   - P8 (Diferencial): Valor único
+   - P2 (Identidad): Nombre, empresa y correo del usuario
+   - P3 (Qué vende): Descripción del producto/servicio
+   - P4 (Sector): Sector al que pertenece la empresa
+   - P5 (Origen o Problema): Según camino A o B
+   - P6 (Nicho o Proceso): Según camino A o B
+   - P7 (Meta): Según camino A o B
+   - P8 (Sitio Web): URL o "no tengo"
+   - P9 (Equipo): Tamaño del equipo
+   - P10 (Diferencial): Valor único
 
 2. EVALUAR cada respuesta en escala 1-10:
    - 1-4: Respuestas como "No sé", "No tengo", "Manual", "Referidos solamente", "A todo el mundo"
@@ -35,11 +37,11 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
 
 3. CALCULAR ÍNDICES:
    - Si camino A (Invisibilidad):
-     - marketing_score = promedio(P3, P4, P5, P6, P7)
-     - experiencia_score = estimado basado en P6, P7, P8 (o 5 por defecto si no hay datos)
+     - marketing_score = promedio(P5, P6, P7, P8, P9)
+     - experiencia_score = estimado basado en P8, P9, P10 (o 5 por defecto si no hay datos)
    - Si camino B (Fricción):
-     - experiencia_score = promedio(P3, P4, P5, P6, P7)
-     - marketing_score = estimado basado en P6, P7, P8 (o 5 por defecto)
+     - experiencia_score = promedio(P5, P6, P7, P8, P9)
+     - marketing_score = estimado basado en P8, P9, P10 (o 5 por defecto)
    - global_score = ((marketing_score + experiencia_score) / 2) * 10
 
 4. DETERMINAR NIVEL:
@@ -48,7 +50,7 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
    - Nivel 3 (71-100): "El Visionario Encerrado" — Fuga Baja
 
 5. DETECTAR CLIENTE POTENCIAL:
-   - true si P7 indica más de 5 personas en el equipo
+   - true si P9 indica más de 5 personas en el equipo
 
 6. DETERMINAR FUGA PRINCIPAL e INTERVENCIÓN URGENTE:
    - Si marketing_score < 5: fuga_principal = "Invisibilidad Selectiva", intervencion = "Boceto de Atracción"
@@ -62,11 +64,11 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
    - icono: 🎨 (marketing), ⚡ (procesos), 🖼️ (tecnologia)
 
 8. DETECTAR datos del usuario:
-   - nombre, empresa, email
+    - nombre, empresa, email
 
-9. INDICAR progreso: 0-8 (número de preguntas respondidas)
+9. INDICAR progreso: 0-10 (número de preguntas respondidas)
 
-10. INDICAR si está completo: true/false
+10. INDICAR si está completo: true/false (true solo si progreso >= 10)
 
 Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
 
@@ -81,7 +83,9 @@ Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
   },
   "respuestas": {
     "P1": "A o B",
-    "P2": "nombre y email",
+    "P2": "nombre, empresa y email",
+    "P3": "qué vende",
+    "P4": "sector",
     ...
   },
   "camino": "A|B|null",
