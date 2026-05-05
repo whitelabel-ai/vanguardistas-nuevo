@@ -72,9 +72,9 @@ function NivelBadge({ nivel }: { nivel: number | null }) {
   if (!nivel) return null;
 
   const niveles = {
-    1: { nombre: "El Lienzo en Blanco", emoji: "🎨", color: "#FF3CAC", desc: "Fuga Alta" },
+    1: { nombre: "El Lienzo en Blanco", emoji: "🎨", color: "#EF5095", desc: "Fuga Alta" },
     2: { nombre: "El Impresionista Difuso", emoji: "🖼️", color: "#FFC906", desc: "Fuga Media" },
-    3: { nombre: "El Visionario Encerrado", emoji: "🏛️", color: "#00D9A5", desc: "Fuga Baja" },
+    3: { nombre: "El Visionario Encerrado", emoji: "🏛️", color: "#54D1A2", desc: "Fuga Baja" },
   };
 
   const info = niveles[nivel as keyof typeof niveles];
@@ -127,7 +127,7 @@ export function AnalysisPanel({
       {/* Header */}
       <div className="px-6 sm:px-7 lg:px-8 xl:px-10 py-6 sm:py-7 lg:py-8 shrink-0">
         <div className="flex items-center gap-3">
-          <FileText className="w-5 h-5 text-[#7A2CFF]" />
+          <FileText className="w-5 h-5 text-[#8E58A4]" />
           <div>
             <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white tracking-tight">
               Mapa de Fugas
@@ -170,12 +170,12 @@ export function AnalysisPanel({
                     <Thermometer
                       label="Atracción (Marketing)"
                       score={analysis.scores.marketing}
-                      color={analysis.scores.marketing <= 4 ? "#FF3CAC" : analysis.scores.marketing <= 7 ? "#FFC906" : "#00D9A5"}
+                      color={analysis.scores.marketing <= 4 ? "#EF5095" : analysis.scores.marketing <= 7 ? "#FFC906" : "#54D1A2"}
                     />
                     <Thermometer
                       label="Conversión (Experiencia)"
                       score={analysis.scores.experiencia}
-                      color={analysis.scores.experiencia <= 4 ? "#FF3CAC" : analysis.scores.experiencia <= 7 ? "#FFC906" : "#00D9A5"}
+                      color={analysis.scores.experiencia <= 4 ? "#EF5095" : analysis.scores.experiencia <= 7 ? "#FFC906" : "#54D1A2"}
                     />
 
                     <NivelBadge nivel={analysis.nivel} />
@@ -193,8 +193,8 @@ export function AnalysisPanel({
               {/* Fuga Detectada */}
               {analysis.fugaPrincipal && (
                 <Section title="Fuga Detectada">
-                  <div className="p-5 sm:p-6 rounded-[24px] bg-white/[0.02] border-l-4 border-[#DD256C] border-y border-r border-white/[0.06]">
-                    <p className="text-sm font-bold text-[#DD256C] mb-2">{analysis.fugaPrincipal}</p>
+                  <div className="p-5 sm:p-6 rounded-[24px] bg-white/[0.02] border-l-4 border-[#EF5095] border-y border-r border-white/[0.06]">
+                    <p className="text-sm font-bold text-[#EF5095] mb-2">{analysis.fugaPrincipal}</p>
                     <p className="text-sm text-white/70 leading-relaxed">
                       {analysis.intervencionUrgente}
                     </p>
@@ -252,7 +252,7 @@ export function AnalysisPanel({
                 >
                   {isSending && (
                     <div className="flex items-center gap-2 text-sm text-[#E8E4F5]/60">
-                      <Loader2 className="w-4 h-4 animate-spin text-[#7A2CFF]" />
+                      <Loader2 className="w-4 h-4 animate-spin text-[#8E58A4]" />
                       Enviando Mapa de Fugas a tu correo...
                     </div>
                   )}
@@ -334,7 +334,7 @@ export function AnalysisPanel({
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="p-5 rounded-2xl bg-gradient-to-br from-[#DD256C]/20 to-[#7A2CFF]/20 border border-[#DD256C]/30"
+                    className="p-5 rounded-2xl bg-gradient-to-br from-[#EF5095]/20 to-[#8E58A4]/20 border border-[#EF5095]/30"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <Zap className="w-4 h-4 text-[#FFC906]" />
@@ -344,12 +344,12 @@ export function AnalysisPanel({
                       Una sesión gratuita de 30 minutos para profundizar en tu Mapa de Fugas y diseñar un plan de acción a medida.
                     </p>
                     <a
-                      href="https://calendar.app.google/Y2tWzCWbTpm7Kage6"
+                      href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full"
                     >
-                      <Button className="w-full h-11 bg-[#DD256C] hover:bg-[#DD256C]/90 text-white rounded-xl font-medium text-sm">
+                      <Button className="w-full h-11 bg-[#EF5095] hover:bg-[#EF5095]/90 text-white rounded-xl font-medium text-sm">
                         Reclamar mi sesión gratuita
                       </Button>
                     </a>
