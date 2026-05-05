@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 const STORAGE_KEY = "qubra-chat-messages";
+
+function makeId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
 
 export interface LiveMessage {
   id: string;
@@ -91,7 +98,7 @@ export function useChatStream() {
   const addMessage = useCallback((message: Omit<LiveMessage, "id">) => {
     const newMessage: LiveMessage = {
       ...message,
-      id: Date.now().toString() + Math.random().toString(36).slice(2, 7),
+      id: makeId(),
     };
     setMessages((prev) => [...prev, newMessage]);
     return newMessage;
@@ -102,7 +109,7 @@ export function useChatStream() {
       if (!content.trim() || isLoading) return;
 
       const userMessage: LiveMessage = {
-        id: Date.now().toString(),
+        id: makeId(),
         role: "user",
         content,
         type: "text",
@@ -133,7 +140,7 @@ export function useChatStream() {
 
         if (reader) {
           const assistantMessage: LiveMessage = {
-            id: (Date.now() + 1).toString(),
+            id: makeId(),
             role: "assistant",
             content: "",
             type: "text",
@@ -161,7 +168,7 @@ export function useChatStream() {
         setMessages((prev) => [
           ...prev,
           {
-            id: Date.now().toString(),
+            id: makeId(),
             role: "assistant",
             content: "Lo siento, hubo un error. ¿Podemos intentar de nuevo?",
             type: "text",
@@ -179,7 +186,7 @@ export function useChatStream() {
       if (isLoading) return;
 
       const userMessage: LiveMessage = {
-        id: Date.now().toString(),
+        id: makeId(),
         role: "user",
         content: "__AUDIO__",
         type: "audio",
@@ -213,7 +220,7 @@ export function useChatStream() {
 
         if (reader) {
           const assistantMessage: LiveMessage = {
-            id: (Date.now() + 1).toString(),
+            id: makeId(),
             role: "assistant",
             content: "",
             type: "text",
@@ -241,7 +248,7 @@ export function useChatStream() {
         setMessages((prev) => [
           ...prev,
           {
-            id: Date.now().toString(),
+            id: makeId(),
             role: "assistant",
             content: "No pude procesar tu audio. ¿Podrías intentar de nuevo?",
             type: "text",

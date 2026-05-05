@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useMediaRecorder } from "@/hooks/useMediaRecorder";
@@ -20,7 +20,34 @@ export function ChatInput({ onSendMessage, onSendAudio, isLoading }: ChatInputPr
   const [isMobile, setIsMobile] = useState(false);
   const [playingRecorded, setPlayingRecorded] = useState(false);
   const recordedAudio = useRef<HTMLAudioElement | null>(null);
+  const recordedAudioUrl = useRef<string | null>(null);
   const [recordStream, setRecordStream] = useState<MediaStream | null>(null);
+
+  const stopRecordedPlayback = useCallback(() => {
+    if (recordedAudio.current) {
+      recordedAudio.current.pause();
+      recordedAudio.current = null;
+    }
+    if (recordedAudioUrl.current) {
+      URL.revokeObjectURL(recordedAudioUrl.current);
+      recordedAudioUrl.current = null;
+    }
+    setPlayingRecorded(false);
+  }, []);
+
+  // Cleanup on unmount: liberar URL del blob, detener audio y MediaStream.
+  useEffect(() => {
+    return () => {
+      if (recordedAudioUrl.current) {
+        URL.revokeObjectURL(recordedAudioUrl.current);
+        recordedAudioUrl.current = null;
+      }
+      if (recordedAudio.current) {
+        recordedAudio.current.pause();
+        recordedAudio.current = null;
+      }
+    };
+  }, []);
 
   const {
     isRecording,
@@ -83,11 +110,7 @@ export function ChatInput({ onSendMessage, onSendAudio, isLoading }: ChatInputPr
   };
 
   const handleCancelRecording = () => {
-    if (playingRecorded && recordedAudio.current) {
-      recordedAudio.current.pause();
-      recordedAudio.current = null;
-      setPlayingRecorded(false);
-    }
+    stopRecordedPlayback();
     cancelRecording();
     if (recordStream) {
       recordStream.getTracks().forEach((t) => t.stop());
@@ -97,11 +120,7 @@ export function ChatInput({ onSendMessage, onSendAudio, isLoading }: ChatInputPr
 
   const handleSendRecorded = () => {
     if (recordedBlob) {
-      if (recordedAudio.current) {
-        recordedAudio.current.pause();
-        recordedAudio.current = null;
-        setPlayingRecorded(false);
-      }
+      stopRecordedPlayback();
       onSendAudio(recordedBlob);
       resetRecorder();
       if (recordStream) {
@@ -114,18 +133,19 @@ export function ChatInput({ onSendMessage, onSendAudio, isLoading }: ChatInputPr
   const handlePlayPauseRecorded = () => {
     if (!recordedBlob) return;
     if (playingRecorded && recordedAudio.current) {
-      recordedAudio.current.pause();
-      recordedAudio.current = null;
-      setPlayingRecorded(false);
+      stopRecordedPlayback();
     } else {
       const url = URL.createObjectURL(recordedBlob);
+      recordedAudioUrl.current = url;
       const audio = new Audio(url);
       recordedAudio.current = audio;
       audio.onended = () => {
-        setPlayingRecorded(false);
-        recordedAudio.current = null;
+        stopRecordedPlayback();
       };
-      audio.play();
+      audio.play().catch((err) => {
+        console.error("Error reproduciendo audio:", err);
+        stopRecordedPlayback();
+      });
       setPlayingRecorded(true);
     }
   };
@@ -239,6 +259,8 @@ export function ChatInput({ onSendMessage, onSendAudio, isLoading }: ChatInputPr
                 />
                 <button
                   onClick={handleAudioToggle}
+                  aria-label={isRecording ? "Detener grabación" : "Grabar audio"}
+                  aria-pressed={isRecording}
                   className={`absolute right-3 bottom-2.5 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors ${
                     isMobile && inputValue.trim() ? "hidden" : "flex"
                   }`}

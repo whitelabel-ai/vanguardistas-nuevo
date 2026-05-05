@@ -3,13 +3,18 @@ import { generateText } from "ai";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+const GEMINI_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS) || 25000;
+
 const informeSchema = z.object({
   userData: z.object({
-    nombre: z.string(),
-    empresa: z.string().optional(),
-    email: z.string().optional(),
+    nombre: z.string().max(200),
+    empresa: z.string().max(200).optional(),
+    email: z.string().max(200).optional(),
   }),
-  respuestas: z.record(z.string(), z.string()),
+  respuestas: z.record(z.string(), z.string().max(2000)),
   camino: z.enum(["A", "B"]).nullable(),
   scores: z.object({
     marketing: z.number(),
@@ -18,8 +23,8 @@ const informeSchema = z.object({
   }),
   nivel: z.number().min(1).max(3).nullable(),
   esClientePotencial: z.boolean(),
-  fugaPrincipal: z.string(),
-  intervencionUrgente: z.string(),
+  fugaPrincipal: z.string().max(500),
+  intervencionUrgente: z.string().max(500),
 });
 
 const informePrompt = `### ROL: Redactor Estratégico Vanguardista
@@ -132,6 +137,7 @@ El informe debe sentirse escrito a mano, con profunda personalización.`;
       system: informePrompt,
       prompt: promptData,
       temperature: 0.7,
+      abortSignal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
     });
 
     return Response.json({ informe: text });

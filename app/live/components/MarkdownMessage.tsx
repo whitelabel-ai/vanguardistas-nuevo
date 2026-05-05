@@ -3,6 +3,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import rehypeSanitize from "rehype-sanitize";
 
 interface MarkdownMessageProps {
   content: string;
@@ -12,6 +13,7 @@ export function MarkdownMessage({ content }: MarkdownMessageProps) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
+      rehypePlugins={[rehypeSanitize]}
       components={{
         p: ({ children }) => (
           <p className="text-[15px] text-white/90 leading-relaxed mb-3 last:mb-0">

@@ -21,8 +21,17 @@ interface ChatMessagesProps {
   onToggleAudio: (message: ChatMessage) => void;
 }
 
+function escapeHtml(input: string) {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function formatMessageContent(content: string) {
-  return content
+  return escapeHtml(content)
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/`(.*?)`/g, "<code>$1</code>")
@@ -127,6 +136,9 @@ export function ChatMessages({
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => onToggleAudio(message)}
+                          type="button"
+                          aria-label={playingMessageId === message.id ? "Pausar audio" : "Reproducir audio"}
+                          aria-pressed={playingMessageId === message.id}
                           className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
                         >
                           {playingMessageId === message.id ? (

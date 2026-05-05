@@ -1,7 +1,38 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { z } from "zod";
 import { LiveMessage } from "./useChatStream";
+
+const analysisResponseSchema = z.object({
+  etapa: z.enum(["retratar", "descomponer", "reinterpretar", "completado"]).catch("retratar"),
+  progreso: z.number().catch(0),
+  completado: z.boolean().catch(false),
+  datosUsuario: z.object({
+    nombre: z.string().nullable().catch(null),
+    empresa: z.string().nullable().catch(null),
+    email: z.string().nullable().catch(null),
+  }).catch({ nombre: null, empresa: null, email: null }),
+  respuestas: z.record(z.string(), z.string()).catch({}),
+  camino: z.enum(["A", "B"]).nullable().catch(null),
+  scores: z.object({
+    marketing: z.number(),
+    experiencia: z.number(),
+    global: z.number(),
+  }).catch({ marketing: 0, experiencia: 0, global: 0 }),
+  nivel: z.union([z.literal(1), z.literal(2), z.literal(3)]).nullable().catch(null),
+  esClientePotencial: z.boolean().catch(false),
+  fugaPrincipal: z.string().catch(""),
+  intervencionUrgente: z.string().catch(""),
+  insights: z.array(
+    z.object({
+      categoria: z.enum(["marketing", "procesos", "tecnologia"]),
+      titulo: z.string(),
+      descripcion: z.string(),
+      icono: z.string(),
+    })
+  ).catch([]),
+});
 
 /* ───────────────────────────────────────────────
    Anti-spam: 3-capas de protección
@@ -196,8 +227,13 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
         throw new Error(`Analyze failed: ${response.status}`);
       }
 
-      const data = await response.json();
-      setAnalysis(data);
+      const raw = await response.json();
+      const parsed = analysisResponseSchema.safeParse(raw);
+      if (parsed.success) {
+        setAnalysis(parsed.data as LiveAnalysis);
+      } else {
+        console.error("Analyze response invalid:", parsed.error);
+      }
     } catch (error) {
       console.error("Analysis error:", error);
     } finally {

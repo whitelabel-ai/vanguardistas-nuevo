@@ -17,12 +17,14 @@ export function TransitionOverlay({ show }: TransitionOverlayProps) {
   useEffect(() => {
     if (!show) return;
 
+    let redirectTimer: ReturnType<typeof setTimeout> | null = null;
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setShowCheck(true);
-          setTimeout(() => {
+          redirectTimer = setTimeout(() => {
             router.push("/resumen");
           }, 800);
           return 100;
@@ -31,7 +33,10 @@ export function TransitionOverlay({ show }: TransitionOverlayProps) {
       });
     }, 60);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (redirectTimer) clearTimeout(redirectTimer);
+    };
   }, [show, router]);
 
   return (

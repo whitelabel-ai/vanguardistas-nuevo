@@ -128,6 +128,9 @@ export function AnalysisSheet({
 
       {/* Bottom Sheet */}
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Panel de diagnóstico"
         animate={{
           height: heightMap[sheetState],
           y: sheetState === "hidden" ? "100%" : 0,
@@ -139,6 +142,8 @@ export function AnalysisSheet({
         <div className="flex items-center justify-center shrink-0 relative">
           <button
             onClick={cycleState}
+            type="button"
+            aria-label="Expandir o contraer panel de diagnóstico"
             className="flex-1 flex items-center justify-center py-2.5 hover:bg-white/[0.02] transition-colors"
           >
             <div className="w-10 h-1 rounded-full bg-white/20" />
@@ -146,6 +151,8 @@ export function AnalysisSheet({
           {/* Close button */}
           <button
             onClick={closeSheet}
+            type="button"
+            aria-label="Cerrar panel de diagnóstico"
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-white/30 hover:text-white/70 hover:bg-white/[0.06] transition-colors"
           >
             <X className="w-3.5 h-3.5" />

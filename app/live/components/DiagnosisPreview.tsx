@@ -5,6 +5,7 @@ import { useRef, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import rehypeSanitize from "rehype-sanitize";
 import { X, Zap, Target, BarChart3, ArrowRight, Calendar, Quote, Sparkles, Palette, Frame, Landmark, Eye, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Scores } from "../hooks/useLiveAnalysis";
@@ -172,6 +173,7 @@ function MarkdownSectionCard({
       <div className="prose prose-invert prose-sm max-w-none">
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkBreaks]}
+          rehypePlugins={[rehypeSanitize]}
           components={{
             h1: ({ children }) => <h1 className="text-2xl font-bold text-[#DD256C] mt-4 mb-3 first:mt-0 glow-text">{children}</h1>,
             h2: ({ children }) => <h2 className="text-lg font-semibold text-[#FFC906] mt-5 mb-2">{children}</h2>,
@@ -295,6 +297,8 @@ export function DiagnosisPreview({
 
               <button
                 onClick={onClose}
+                type="button"
+                aria-label="Cerrar diagnóstico"
                 className="group p-2.5 rounded-xl text-white/30 hover:text-white hover:bg-white/[0.06] transition-all"
               >
                 <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
