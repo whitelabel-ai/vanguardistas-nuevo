@@ -21,10 +21,8 @@ export function LiveContainer() {
     isSending,
     sendResult,
     loadInforme,
-    isEmailSent,
     isSessionSent,
     isRateLimited,
-    markEmailAsSent,
   } = useLiveAnalysis(messages);
 
   const [informe, setInforme] = useState<string | null>(null);
@@ -33,8 +31,10 @@ export function LiveContainer() {
   const [showSendingModal, setShowSendingModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  // Auto-trigger guard (para esta instancia del componente)
-  const autoTriggeredRef = useRef(false);
+  // Set de correos a los que ya disparamos el envío automático en esta
+  // instancia. Si el usuario corrige el correo, el nuevo no estará en el set
+  // y volveremos a enviar el diagnóstico al correo actualizado.
+  const autoSentEmailsRef = useRef<Set<string>>(new Set());
 
   // Sheet state (mobile)
   const [sheetState, setSheetState] = useState<"hidden" | "collapsed" | "half" | "full">("hidden");
@@ -47,12 +47,13 @@ export function LiveContainer() {
 
   /* ── Al montar: restaurar informe persistido si existe ── */
   useEffect(() => {
-    const email = analysis.datosUsuario.email;
+    const email = analysis.datosUsuario.email?.trim().toLowerCase();
     if (!email) return;
     const saved = loadInforme(email);
     if (saved) {
       setInforme(saved);
-      autoTriggeredRef.current = true; // evitar re-envío automático
+      // Ya enviado anteriormente: no reenviar al mismo correo en esta sesión.
+      autoSentEmailsRef.current.add(email);
     }
   }, [analysis.datosUsuario.email, loadInforme]);
 
@@ -96,32 +97,39 @@ export function LiveContainer() {
     }
   }, [generateInforme]);
 
-  /* ── Auto-trigger diagnosis when completed ── */
+  /* ── Auto-trigger diagnosis when completed ──
+     Se dispara una vez por cada correo distinto. Si el usuario corrige el
+     correo (typo), el nuevo no estará en `autoSentEmailsRef` y volveremos a
+     enviar el diagnóstico al correo actualizado, sin tocar el rate-limit
+     (rate-limit se aplica por dirección, no global). */
   useEffect(() => {
-    if (
-      !analysis.completado ||
-      !analysis.datosUsuario.nombre ||
-      !analysis.datosUsuario.email ||
-      informe ||
-      autoTriggeredRef.current ||
-      isSending ||
-      sendResult
-    ) {
-      return;
-    }
-
+    const rawEmail = analysis.datosUsuario.email;
+    const email = rawEmail?.trim().toLowerCase();
     const nombre = analysis.datosUsuario.nombre;
-    const email = analysis.datosUsuario.email;
-    autoTriggeredRef.current = true;
 
-    // Capa 2: ya enviado en esta sesión (tab sleep/wake)
-    // Capa 3: rate limiting (24h)
+    if (!analysis.completado || !nombre || !email || isSending) return;
+    if (autoSentEmailsRef.current.has(email)) return;
+
+    // Marcamos antes de la llamada async para evitar re-disparos por
+    // re-renders mientras la solicitud está en vuelo.
+    autoSentEmailsRef.current.add(email);
+
+    // Si ya se envió a este correo en esta sesión o estamos dentro del rate
+    // limit (5 min), no reenviamos: solo mostramos el diagnóstico.
     if (isSessionSent(email) || isRateLimited(email)) {
-      handleGenerateAndShow();
+      if (!informe) handleGenerateAndShow();
+      else setShowPreview(true);
       return;
     }
 
-    // Insertar mensaje de preparación (NO se guarda en chat history)
+    // Si el correo cambió y ya teníamos un informe generado, lo reusamos.
+    if (informe) {
+      setShowSendingModal(true);
+      sendDiagnosis(informe);
+      return;
+    }
+
+    // Primer envío: insertar mensaje de preparación y generar + enviar.
     addMessage({
       role: "assistant",
       content: `Gracias, ${nombre}. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos...`,
@@ -136,12 +144,12 @@ export function LiveContainer() {
     analysis.datosUsuario.email,
     informe,
     isSending,
-    sendResult,
     isSessionSent,
     isRateLimited,
     addMessage,
     handleGenerateAndShow,
     handleGenerateAndSend,
+    sendDiagnosis,
   ]);
 
   /* ── Handle send result: mostrar preview y limpiar ── */
@@ -166,8 +174,9 @@ export function LiveContainer() {
   const handleResend = async () => {
     if (!informe) return;
     setShowSendingModal(true);
-    const email = analysis.datosUsuario.email;
-    if (email) markEmailAsSent(email);
+    // No marcamos como enviado aquí: sendDiagnosis lo hace solo si la
+    // respuesta del webhook es OK. Marcar antes hacía que un envío fallido
+    // quedara registrado como exitoso.
     await sendDiagnosis(informe);
   };
 
@@ -229,7 +238,10 @@ export function LiveContainer() {
             handleResend();
           } else {
             setShowSendingModal(false);
-            autoTriggeredRef.current = false;
+            // Permitir que el auto-trigger vuelva a intentarlo para el correo
+            // actual.
+            const email = analysis.datosUsuario.email?.trim().toLowerCase();
+            if (email) autoSentEmailsRef.current.delete(email);
           }
         }}
       />

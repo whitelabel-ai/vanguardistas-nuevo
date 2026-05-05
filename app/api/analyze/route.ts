@@ -79,6 +79,10 @@ Analiza esta conversación entre un usuario y Qubra. Extrae toda la información
 
 8. DETECTAR datos del usuario:
     - nombre, empresa, email
+    - REGLA CRÍTICA DEL EMAIL: si el usuario menciona varios correos a lo largo
+      de la conversación (corrige un typo, dice "ah, mejor envíalo a otro"),
+      devuelve SIEMPRE el ÚLTIMO correo válido mencionado por el usuario,
+      nunca el primero. Lo mismo para nombre y empresa cuando se corrigen.
 
 9. INDICAR progreso: 0-10 (número de preguntas respondidas)
 
