@@ -537,9 +537,14 @@ export default function HomePage() {
                 Encontrar mis fugas — es gratis
               </button>
             </Link>
-            <Link href="#" className="inline-flex items-center gap-2 px-6 py-5 border border-white/12 rounded-2xl text-[14px] text-white/60 hover:border-white/25 hover:text-white transition-colors">
+            <a
+              href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-5 border border-white/12 rounded-2xl text-[14px] text-white/60 hover:border-white/25 hover:text-white transition-colors"
+            >
               Agendar una reunión
-            </Link>
+            </a>
           </motion.div>
 
           <motion.p variants={stagger(0.3)} initial="hidden" whileInView="show" viewport={vp} className="text-[12px] text-white/25 tracking-wider">

@@ -351,7 +351,7 @@ export function DiagnosisPreview({
                     </p>
                   </div>
                   <a
-                    href="https://calendar.app.google/Y2tWzCWbTpm7Kage6"
+                    href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2"

@@ -8,19 +8,14 @@ const socialLinks = [
     icon: "/img/logo-instagram.png",
   },
   {
-    name: "TikTok",
-    href: "https://www.tiktok.com/@vanguardistas.co?_t=ZS-8yu5QkIpUzF&_r=1",
-    icon: "/img/logo-tiktok.png",
-  },
-  {
     name: "YouTube",
-    href: "https://www.youtube.com/@vanguardistas_co/shorts",
+    href: "https://www.youtube.com/@vanguardistas_co",
     icon: "/img/logo-youtube.svg",
   },
   {
     name: "LinkedIn",
     href: "https://www.linkedin.com/company/vanguardistasmarketing/",
-    icon: "/img/logo-linkedin.svg",
+    icon: "/img/logo-linkedIn.svg",
   },
 ];
 
