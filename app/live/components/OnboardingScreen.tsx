@@ -13,19 +13,19 @@ const phases = [
   {
     icon: Search,
     title: "Retratar",
-    color: "#7A2CFF",
+    color: "#EF5095",
     tooltip: "Descubrimos la esencia y propósito de tu marca",
   },
   {
     icon: Target,
     title: "Descomponer",
-    color: "#FF3CAC",
+    color: "#FFC906",
     tooltip: "Identificamos las fugas en ventas, proceso y visibilidad",
   },
   {
     icon: Lightbulb,
     title: "Reinterpretar",
-    color: "#00E0FF",
+    color: "#8E58A4",
     tooltip: "Construimos un plan de acción personalizado",
   },
 ];
@@ -87,7 +87,7 @@ export function OnboardingScreen({ onComplete, firstMessageReady }: OnboardingSc
           <div className="w-14 h-14 rounded-full overflow-hidden avatar-pulse-ring">
             <img src="/img/qubra.png" alt="Qubra" className="w-full h-full object-cover" />
           </div>
-          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#00E0FF] border-[2.5px] border-[#0B0B16]" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#8E58A4] border-[2.5px] border-[#0B0B16]" />
         </motion.div>
 
         {/* Methodology label */}
@@ -149,7 +149,7 @@ export function OnboardingScreen({ onComplete, firstMessageReady }: OnboardingSc
               key={i}
               className="w-1.5 h-1.5 rounded-full"
               style={{
-                backgroundColor: i === 0 ? "#7A2CFF" : i === 1 ? "#FF3CAC" : "#00E0FF",
+                backgroundColor: i === 0 ? "#EF5095" : i === 1 ? "#FFC906" : "#8E58A4",
               }}
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}

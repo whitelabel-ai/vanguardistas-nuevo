@@ -118,7 +118,7 @@ export function ChatPanel({
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#00E0FF] border-2 border-[#090A12] online-dot" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#54D1A2] border-2 border-[#090A12] online-dot" />
           </div>
           <div>
             <h2 className="text-base sm:text-lg font-semibold text-white">Qubra</h2>
@@ -128,7 +128,7 @@ export function ChatPanel({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[#00E0FF] online-dot" />
+          <div className="w-2 h-2 rounded-full bg-[#54D1A2] online-dot" />
           <span className="text-[11px] sm:text-xs text-white/40">Activo</span>
         </div>
       </div>
@@ -181,12 +181,12 @@ export function ChatPanel({
                   {isProgress ? (
                     <div className="rounded-2xl rounded-tl-sm overflow-hidden bg-[#0B0B16] border border-white/[0.06]">
                       {/* Top accent line */}
-                      <div className="h-0.5 w-full bg-gradient-to-r from-[#7A2CFF] via-[#00E0FF] to-[#FF3CAC]" />
+                      <div className="h-0.5 w-full bg-gradient-to-r from-[#8E58A4] via-[#EF5095] to-[#54D1A2]" />
                       
                       <div className="px-4 py-3.5">
                         <p className="text-[15px] text-white/90 leading-relaxed mb-3">
                           Hemos completado la fase{" "}
-                          <span className="text-[#00E0FF] font-semibold">
+                          <span className="text-[#54D1A2] font-semibold">
                             {etapaLabels[etapa] || etapa}
                           </span>
                           . Tu diagnóstico avanza.
@@ -205,7 +205,7 @@ export function ChatPanel({
                           {onOpenAnalysis && (
                             <button
                               onClick={onOpenAnalysis}
-                              className="group flex items-center gap-1.5 text-[13px] text-white/60 hover:text-[#00E0FF] transition-colors"
+                              className="group flex items-center gap-1.5 text-[13px] text-white/60 hover:text-[#54D1A2] transition-colors"
                             >
                               <BarChart3 className="w-3.5 h-3.5" />
                               Ver diagnóstico
@@ -223,7 +223,7 @@ export function ChatPanel({
                     }`}>
                       {message.content === "__AUDIO__" ? (
                         <div className="flex items-center gap-2">
-                          <Mic className="w-4 h-4 text-[#00E0FF]" />
+                          <Mic className="w-4 h-4 text-[#54D1A2]" />
                           <span className="text-[15px] text-white/70">Mensaje de voz</span>
                         </div>
                       ) : (
@@ -276,7 +276,7 @@ export function ChatPanel({
             className={`relative flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all ${
               isRecording
                 ? "bg-red-500/20 text-red-400 animate-pulse"
-                : "text-white/30 hover:text-[#00E0FF] hover:bg-white/[0.05]"
+                : "text-white/30 hover:text-[#54D1A2] hover:bg-white/[0.05]"
             } disabled:opacity-30`}
             title={isRecording ? "Detener grabación" : "Grabar audio"}
           >
@@ -305,7 +305,7 @@ export function ChatPanel({
             disabled={!input.trim() || isLoading || isRecording}
             type="button"
             aria-label="Enviar mensaje"
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-white/30 hover:text-[#00E0FF] hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:text-white/30 disabled:hover:bg-transparent transition-all"
+            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-white/30 hover:text-[#54D1A2] hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:text-white/30 disabled:hover:bg-transparent transition-all"
           >
             <Send className="w-[18px] h-[18px]" />
           </button>

@@ -76,7 +76,7 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
           >
             {/* Avatar animado */}
             <div className="relative mb-8">
-              <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-[#7A2CFF]/30 ring-offset-4 ring-offset-[#0B0B16] avatar-typing avatar-ripple">
+              <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-[#8E58A4]/30 ring-offset-4 ring-offset-[#0B0B16] avatar-typing avatar-ripple">
                 <img
                   src="/img/qubra.png"
                   alt="Qubra"
@@ -84,8 +84,8 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
                 />
               </div>
               {/* Pulse rings */}
-              <span className="absolute inset-0 rounded-full bg-[#7A2CFF]/20 animate-ping" />
-              <span className="absolute -inset-3 rounded-full bg-[#7A2CFF]/10 animate-pulse" />
+              <span className="absolute inset-0 rounded-full bg-[#8E58A4]/20 animate-ping" />
+              <span className="absolute -inset-3 rounded-full bg-[#8E58A4]/10 animate-pulse" />
             </div>
 
             {hasTimedOut ? (
@@ -133,7 +133,7 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
                 {/* Barra de progreso animada */}
                 <div className="w-64 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-[#7A2CFF] via-[#DD256C] to-[#FFC906]"
+                    className="h-full rounded-full bg-gradient-to-r from-[#8E58A4] via-[#EF5095] to-[#FFC906]"
                     initial={{ width: "0%" }}
                     animate={{ width: ["0%", "40%", "70%", "90%", "95%"] }}
                     transition={{

@@ -16,15 +16,15 @@ interface InsightCardsProps {
 const categoryConfig = {
   marketing: {
     border: "border-neon-marketing",
-    iconColor: "text-[#FF3CAC]",
+    iconColor: "text-[#EF5095]",
   },
   procesos: {
     border: "border-neon-procesos",
-    iconColor: "text-[#00E0FF]",
+    iconColor: "text-[#54D1A2]",
   },
   tecnologia: {
     border: "border-neon-tecnologia",
-    iconColor: "text-[#7A2CFF]",
+    iconColor: "text-[#8E58A4]",
   },
 };
 

@@ -20,9 +20,9 @@ export function BuyerPersonaBadge({ persona }: BuyerPersonaBadgeProps) {
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#7A2CFF]/20"
+      className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#8E58A4]/20"
     >
-      <div className="w-1.5 h-1.5 rounded-full bg-[#7A2CFF] mr-2 dot-glow" />
+      <div className="w-1.5 h-1.5 rounded-full bg-[#8E58A4] mr-2 dot-glow" />
       <span className="text-sm text-white/80">{persona}</span>
     </motion.div>
   );
