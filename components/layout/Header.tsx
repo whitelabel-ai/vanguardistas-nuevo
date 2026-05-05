@@ -32,22 +32,19 @@ export function Header() {
           <nav className="flex items-center gap-3">
             {isLive ? (
               <>
-                <Link href="/about">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white/70 hover:text-white hover:bg-white/10"
-                  >
-                    Nosotros
+                <Link href="/#servicios">
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
+                    Servicios
                   </Button>
                 </Link>
-                <Link href="/legacy">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground"
-                  >
-                    Versión Clásica
+                <Link href="/#como-funciona">
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
+                    Cómo funciona
+                  </Button>
+                </Link>
+                <Link href="/#para-quien">
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
+                    ¿Para quién?
                   </Button>
                 </Link>
               </>
