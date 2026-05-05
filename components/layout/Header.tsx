@@ -74,23 +74,25 @@ export function Header() {
               </>
             ) : (
               <>
+                <Link href="/#servicios">
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
+                    Servicios
+                  </Button>
+                </Link>
+                <Link href="/#como-funciona">
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
+                    Cómo funciona
+                  </Button>
+                </Link>
                 <Link href="/live">
-                  <Button
-                    variant="gradient"
-                    size="sm"
-                    className="rounded-full px-6 font-medium"
-                  >
+                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
                     Diagnóstico en Vivo
                   </Button>
                 </Link>
-                <Link href="/about">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white/70 hover:text-white hover:bg-white/10"
-                  >
-                    Nosotros
-                  </Button>
+                <Link href="/#qubra">
+                  <button className="btn-cta-landing px-5 py-2.5 rounded-2xl text-sm font-semibold shadow-sm whitespace-nowrap">
+                    Iniciar Diagnóstico
+                  </button>
                 </Link>
               </>
             )}
