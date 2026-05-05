@@ -85,12 +85,7 @@ export function Header() {
                   </Button>
                 </Link>
                 <Link href="/live">
-                  <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 hidden md:inline-flex">
-                    Diagnóstico en Vivo
-                  </Button>
-                </Link>
-                <Link href="/#qubra">
-                  <button className="btn-cta-landing px-5 py-2.5 rounded-2xl text-sm font-semibold shadow-sm whitespace-nowrap">
+                  <button className="px-5 py-2 rounded-full border border-white/15 text-sm font-medium text-white/80 hover:text-white hover:border-white/30 transition-colors whitespace-nowrap">
                     Iniciar Diagnóstico
                   </button>
                 </Link>
