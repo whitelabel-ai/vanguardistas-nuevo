@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = "nodejs";
 export const maxDuration = 300; // 5 minutos para Vercel Pro
-
-const WEBHOOK_URL = "https://automation.whitelabel.lat/webhook/Qubra";
 
 export async function POST(request: NextRequest) {
   try {
+    const webhookUrl = process.env.WEBHOOK_URL;
+    if (!webhookUrl || !/^https:\/\//i.test(webhookUrl)) {
+      console.error("WEBHOOK_URL no configurado o no usa HTTPS");
+      return NextResponse.json(
+        { error: "Webhook no configurado correctamente" },
+        { status: 500 }
+      );
+    }
+
     const contentType = request.headers.get("content-type") || "";
 
     let body: FormData | string;
-    let headers: Record<string, string> = {};
+    const headers: Record<string, string> = {};
 
     if (contentType.includes("multipart/form-data")) {
       // Audio upload (FormData)
@@ -22,10 +30,11 @@ export async function POST(request: NextRequest) {
       headers["Content-Type"] = "application/json";
     }
 
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers,
       body,
+      signal: AbortSignal.timeout(60000),
     });
 
     if (!response.ok) {

@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { cleanMarkdown, convertMarkdownToHTML } from "@/lib/markdown";
+import { cleanMarkdown } from "@/lib/markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import rehypeSanitize from "rehype-sanitize";
 import { ArrowLeft, CalendarPlus } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ResumenPage() {
   const router = useRouter();
   const [content, setContent] = useState<{
-    html: string;
+    markdown: string;
     date: string | null;
   } | null>(null);
   const [noStudy, setNoStudy] = useState(false);
@@ -21,7 +25,6 @@ export default function ResumenPage() {
 
     if (studyReport) {
       const cleaned = cleanMarkdown(studyReport);
-      const html = convertMarkdownToHTML(cleaned);
       let date: string | null = null;
       if (studyTimestamp) {
         date = new Date(parseInt(studyTimestamp)).toLocaleDateString("es-ES", {
@@ -32,7 +35,7 @@ export default function ResumenPage() {
           minute: "2-digit",
         });
       }
-      setContent({ html, date });
+      setContent({ markdown: cleaned, date });
     } else {
       setNoStudy(true);
     }
@@ -84,10 +87,14 @@ export default function ResumenPage() {
             <p className="text-muted-foreground mb-8">Generado el: {content.date}</p>
           )}
 
-          <div
-            className="prose prose-invert prose-lg max-w-none bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 sm:p-10"
-            dangerouslySetInnerHTML={{ __html: content?.html || "" }}
-          />
+          <div className="prose prose-invert prose-lg max-w-none bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 sm:p-10">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkBreaks]}
+              rehypePlugins={[rehypeSanitize]}
+            >
+              {content?.markdown || ""}
+            </ReactMarkdown>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
             <Button variant="gradient" onClick={() => router.push("/")}>

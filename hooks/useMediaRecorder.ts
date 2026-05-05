@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 function audioBufferToWav(buffer: AudioBuffer): Blob {
   const length = buffer.length;
@@ -48,10 +48,19 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
 }
 
 async function convertToWav(audioBlob: Blob): Promise<Blob> {
-  const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-  const arrayBuffer = await audioBlob.arrayBuffer();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-  return audioBufferToWav(audioBuffer);
+  const Ctor =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext?: typeof AudioContext })
+      .webkitAudioContext;
+  if (!Ctor) throw new Error("AudioContext no soportado");
+  const audioContext = new Ctor();
+  try {
+    const arrayBuffer = await audioBlob.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    return audioBufferToWav(audioBuffer);
+  } finally {
+    audioContext.close().catch(() => {});
+  }
 }
 
 export function useMediaRecorder() {
@@ -112,7 +121,16 @@ export function useMediaRecorder() {
         const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
         setRecordingDuration(duration);
         if (duration >= 20) {
-          stopRecording();
+          // Auto-stop al alcanzar el límite. Inlined para no depender de
+          // una referencia a `stopRecording` aún sin declarar.
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
+            mediaRecorder.current.stop();
+          }
+          setIsRecording(false);
         }
       }, 100);
     } catch (error) {
@@ -122,15 +140,16 @@ export function useMediaRecorder() {
   }, []);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorder.current && isRecording) {
-      mediaRecorder.current.stop();
-      setIsRecording(false);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  }, [isRecording]);
+    const recorder = mediaRecorder.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+    }
+    setIsRecording(false);
+  }, []);
 
   const cancelRecording = useCallback(() => {
     stopRecording();
@@ -142,6 +161,26 @@ export function useMediaRecorder() {
     setRecordedBlob(null);
     setRecordingDuration(0);
     setIsRecording(false);
+  }, []);
+
+  // Cleanup en unmount: detener recorder, intervalos y tracks.
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      const recorder = mediaRecorder.current;
+      if (recorder && recorder.state !== "inactive") {
+        try {
+          recorder.stop();
+        } catch {}
+      }
+      if (recorder?.stream) {
+        recorder.stream.getTracks().forEach((t) => t.stop());
+      }
+      mediaRecorder.current = null;
+    };
   }, []);
 
   return {

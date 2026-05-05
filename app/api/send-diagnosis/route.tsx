@@ -3,6 +3,9 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { z } from "zod";
 import { DiagnosticoPDF } from "../generate-pdf/DiagnosticoPDF";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 const sendDiagnosisSchema = z.object({
   userData: z.object({
     nombre: z.string(),
@@ -78,6 +81,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!/^https:\/\//i.test(webhookUrl)) {
+      console.error("Webhook URL inseguro (debe usar HTTPS):", webhookUrl);
+      return Response.json(
+        { error: "Configuración de webhook inválida" },
+        { status: 500 }
+      );
+    }
+
     let pdfBase64 = "";
     try {
       const buffer = await renderToBuffer(
@@ -100,7 +111,7 @@ export async function POST(request: NextRequest) {
       console.error("PDF generation error:", pdfError);
     }
 
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       user_name: userData.nombre,
       user_email: userData.email,
       user_empresa: userData.empresa || "",
@@ -116,14 +127,17 @@ export async function POST(request: NextRequest) {
       intervencion_urgente: intervencionUrgente,
       informe_markdown: informe,
       pdf_base64: pdfBase64,
-      webhook_secret: webhookSecret,
       ...respuestas,
     };
 
     const response = await fetch(webhookUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(webhookSecret ? { Authorization: `Bearer ${webhookSecret}` } : {}),
+      },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {

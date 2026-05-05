@@ -47,16 +47,14 @@ export function LiveContainer() {
 
   /* ── Al montar: restaurar informe persistido si existe ── */
   useEffect(() => {
-    if (analysis.datosUsuario.email) {
-      const saved = loadInforme(analysis.datosUsuario.email);
-      if (saved) {
-        setInforme(saved);
-        autoTriggeredRef.current = true; // evitar re-envío automático
-      }
+    const email = analysis.datosUsuario.email;
+    if (!email) return;
+    const saved = loadInforme(email);
+    if (saved) {
+      setInforme(saved);
+      autoTriggeredRef.current = true; // evitar re-envío automático
     }
-  // Solo al montar / cuando cambia el email detectado
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysis.datosUsuario.email]);
+  }, [analysis.datosUsuario.email, loadInforme]);
 
   /* ── Detect progress milestone ── */
   const lastEtapaRef = useRef<string | null>(null);
@@ -80,50 +78,71 @@ export function LiveContainer() {
     }
   }, [analysis, addMessage]);
 
+  const handleGenerateAndSend = useCallback(async () => {
+    const result = await generateInforme();
+    if (result) {
+      setInforme(result);
+      await sendDiagnosis(result);
+    } else {
+      setShowSendingModal(false);
+    }
+  }, [generateInforme, sendDiagnosis]);
+
+  const handleGenerateAndShow = useCallback(async () => {
+    const result = await generateInforme();
+    if (result) {
+      setInforme(result);
+      setShowPreview(true);
+    }
+  }, [generateInforme]);
+
   /* ── Auto-trigger diagnosis when completed ── */
   useEffect(() => {
     if (
-      analysis.completado &&
-      analysis.datosUsuario.nombre &&
-      analysis.datosUsuario.email &&
-      !informe &&
-      !autoTriggeredRef.current &&
-      !isSending &&
-      !sendResult
+      !analysis.completado ||
+      !analysis.datosUsuario.nombre ||
+      !analysis.datosUsuario.email ||
+      informe ||
+      autoTriggeredRef.current ||
+      isSending ||
+      sendResult
     ) {
-      const nombre = analysis.datosUsuario.nombre;
-      const email = analysis.datosUsuario.email;
-
-      // ── 3 Capas de protección anti-spam ──
-
-      // Capa 2: ya enviado en esta sesión (tab sleep/wake)
-      if (isSessionSent(email)) {
-        autoTriggeredRef.current = true;
-        handleGenerateAndShow();
-        return;
-      }
-
-      // Capa 3: rate limiting (24h)
-      if (isRateLimited(email)) {
-        autoTriggeredRef.current = true;
-        handleGenerateAndShow();
-        return;
-      }
-
-      autoTriggeredRef.current = true;
-
-      // Insertar mensaje de preparación (NO se guarda en chat history)
-      addMessage({
-        role: "assistant",
-        content: `Gracias, ${nombre}. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos...`,
-        type: "text",
-      });
-
-      setShowSendingModal(true);
-      handleGenerateAndSend();
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysis.completado, analysis.datosUsuario.nombre, analysis.datosUsuario.email, informe, isSending, sendResult]);
+
+    const nombre = analysis.datosUsuario.nombre;
+    const email = analysis.datosUsuario.email;
+    autoTriggeredRef.current = true;
+
+    // Capa 2: ya enviado en esta sesión (tab sleep/wake)
+    // Capa 3: rate limiting (24h)
+    if (isSessionSent(email) || isRateLimited(email)) {
+      handleGenerateAndShow();
+      return;
+    }
+
+    // Insertar mensaje de preparación (NO se guarda en chat history)
+    addMessage({
+      role: "assistant",
+      content: `Gracias, ${nombre}. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos...`,
+      type: "text",
+    });
+
+    setShowSendingModal(true);
+    handleGenerateAndSend();
+  }, [
+    analysis.completado,
+    analysis.datosUsuario.nombre,
+    analysis.datosUsuario.email,
+    informe,
+    isSending,
+    sendResult,
+    isSessionSent,
+    isRateLimited,
+    addMessage,
+    handleGenerateAndShow,
+    handleGenerateAndSend,
+  ]);
 
   /* ── Handle send result: mostrar preview y limpiar ── */
   useEffect(() => {
@@ -143,24 +162,6 @@ export function LiveContainer() {
 
     return () => clearTimeout(timer);
   }, [sendResult]);
-
-  const handleGenerateAndSend = async () => {
-    const result = await generateInforme();
-    if (result) {
-      setInforme(result);
-      await sendDiagnosis(result);
-    } else {
-      setShowSendingModal(false);
-    }
-  };
-
-  const handleGenerateAndShow = async () => {
-    const result = await generateInforme();
-    if (result) {
-      setInforme(result);
-      setShowPreview(true);
-    }
-  };
 
   const handleResend = async () => {
     if (!informe) return;
@@ -219,6 +220,18 @@ export function LiveContainer() {
       <SendingModal
         isOpen={showSendingModal}
         nombre={analysis.datosUsuario.nombre}
+        onTimeout={() => {
+          // El modal mostrará el estado de error; el envío real puede seguir en
+          // segundo plano y, si llega `sendResult`, el efecto de abajo lo cerrará.
+        }}
+        onRetry={() => {
+          if (informe) {
+            handleResend();
+          } else {
+            setShowSendingModal(false);
+            autoTriggeredRef.current = false;
+          }
+        }}
       />
 
       {/* Diagnosis Preview Full Screen */}

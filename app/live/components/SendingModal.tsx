@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTypingEffect } from "@/hooks/useTypingEffect";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
@@ -29,6 +29,12 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
   const [secondsLeft, setSecondsLeft] = useState(TIMEOUT_SECONDS);
   const [hasTimedOut, setHasTimedOut] = useState(false);
 
+  // Mantener la última versión del callback sin re-disparar el efecto.
+  const onTimeoutRef = useRef(onTimeout);
+  useEffect(() => {
+    onTimeoutRef.current = onTimeout;
+  }, [onTimeout]);
+
   useEffect(() => {
     if (!isOpen) {
       setSecondsLeft(TIMEOUT_SECONDS);
@@ -41,7 +47,7 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
         if (prev <= 1) {
           clearInterval(interval);
           setHasTimedOut(true);
-          onTimeout?.();
+          onTimeoutRef.current?.();
           return 0;
         }
         return prev - 1;
@@ -49,7 +55,7 @@ export function SendingModal({ isOpen, nombre, onTimeout, onRetry }: SendingModa
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isOpen, onTimeout]);
+  }, [isOpen]);
 
   return (
     <AnimatePresence>

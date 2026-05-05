@@ -3,14 +3,28 @@ import { generateText } from "ai";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+const GEMINI_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS) || 25000;
+
 const analyzeSchema = z.object({
   messages: z.array(
     z.object({
       role: z.enum(["user", "assistant"]),
-      content: z.string(),
+      content: z.string().max(8000),
     })
-  ),
+  ).max(200),
 });
+
+// Sanitiza el contenido del usuario antes de incrustarlo en el prompt para
+// reducir la superficie de prompt-injection (saltos de línea con palabras como
+// "System:", "Assistant:" intentando reescribir instrucciones).
+function sanitizeForPrompt(content: string): string {
+  return content
+    .replace(/\r/g, "")
+    .replace(/^\s*(system|assistant|user)\s*:/gim, "[$1-redacted]:");
+}
 
 const analyzePrompt = `Eres Qubra, el analizador de diagnóstico empresarial de Vanguardistas.
 
@@ -114,7 +128,7 @@ export async function POST(request: NextRequest) {
     const { messages } = analyzeSchema.parse(body);
 
     const conversationText = messages
-      .map((m) => `${m.role === "user" ? "Usuario" : "Qubra"}: ${m.content}`)
+      .map((m) => `${m.role === "user" ? "Usuario" : "Qubra"}: ${sanitizeForPrompt(m.content)}`)
       .join("\n\n");
 
     const { text } = await generateText({
@@ -122,6 +136,7 @@ export async function POST(request: NextRequest) {
       system: analyzePrompt,
       prompt: conversationText,
       temperature: 0.3,
+      abortSignal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
     });
 
     let analysis;
@@ -163,7 +178,7 @@ export async function POST(request: NextRequest) {
     }
 
     return Response.json(analysis);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Analyze error:", error);
     return Response.json(
       {
@@ -179,7 +194,6 @@ export async function POST(request: NextRequest) {
         fugaPrincipal: "",
         intervencionUrgente: "",
         insights: [],
-        _error: error?.message || "Unknown error",
       },
       { status: 500 }
     );

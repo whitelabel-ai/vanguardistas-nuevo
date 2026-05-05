@@ -3,10 +3,13 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { z } from "zod";
 import { DiagnosticoPDF } from "./DiagnosticoPDF";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 const pdfSchema = z.object({
-  nombre: z.string(),
-  empresa: z.string().optional(),
-  camino: z.string().nullable(),
+  nombre: z.string().max(200),
+  empresa: z.string().max(200).optional(),
+  camino: z.string().max(50).nullable(),
   scores: z.object({
     marketing: z.number(),
     experiencia: z.number(),
@@ -14,9 +17,9 @@ const pdfSchema = z.object({
   }),
   nivel: z.number().min(1).max(3).nullable(),
   esClientePotencial: z.boolean(),
-  fugaPrincipal: z.string(),
-  intervencionUrgente: z.string(),
-  informe: z.string(),
+  fugaPrincipal: z.string().max(500),
+  intervencionUrgente: z.string().max(500),
+  informe: z.string().max(50000),
 });
 
 export async function POST(request: NextRequest) {
@@ -29,11 +32,16 @@ export async function POST(request: NextRequest) {
     );
 
     const uint8Array = new Uint8Array(buffer);
+    const safeFilename = data.nombre
+      .normalize("NFKD")
+      .replace(/[^\w\d-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "diagnostico";
 
     return new Response(uint8Array, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="mapa-de-fugas-${data.nombre}.pdf"`,
+        "Content-Disposition": `attachment; filename="mapa-de-fugas-${safeFilename}.pdf"`,
       },
     });
   } catch (error) {

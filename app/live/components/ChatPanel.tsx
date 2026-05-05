@@ -270,6 +270,9 @@ export function ChatPanel({
           <button
             onClick={toggleRecording}
             disabled={isLoading}
+            type="button"
+            aria-label={isRecording ? "Detener grabación de audio" : "Grabar mensaje de audio"}
+            aria-pressed={isRecording}
             className={`relative flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all ${
               isRecording
                 ? "bg-red-500/20 text-red-400 animate-pulse"
@@ -300,6 +303,8 @@ export function ChatPanel({
           <button
             onClick={onSend}
             disabled={!input.trim() || isLoading || isRecording}
+            type="button"
+            aria-label="Enviar mensaje"
             className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-white/30 hover:text-[#00E0FF] hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:text-white/30 disabled:hover:bg-transparent transition-all"
           >
             <Send className="w-[18px] h-[18px]" />
