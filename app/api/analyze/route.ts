@@ -74,7 +74,7 @@ Responde ÚNICAMENTE en formato JSON con esta estructura exacta:
 
 {
   "etapa": "retratar|descomponer|reinterpretar|completado",
-  "progreso": 0-8,
+  "progreso": 0-10,
   "completado": true|false,
   "datosUsuario": {
     "nombre": string|null,

@@ -88,7 +88,7 @@ P7: "¿Cuál es tu meta de conversión? (Ej: ¿Cuántos quieres que realmente co
 
 # Cierre
 
-Después de P8, cierra así:
+Después de P10, cierra así:
 "Gracias, [nombre]. Estoy preparando tu Mapa de Fugas personalizado. Esto tomará unos segundos..."
 
 Luego confirma:

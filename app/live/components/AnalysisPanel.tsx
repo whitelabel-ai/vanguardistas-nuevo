@@ -120,7 +120,7 @@ export function AnalysisPanel({
   const hasInsights = analysis.insights.length > 0;
   const hasUserData = analysis.datosUsuario.nombre || analysis.datosUsuario.empresa || analysis.datosUsuario.email;
   const hasScores = analysis.scores.global > 0;
-  const diagnosisReady = !!informe;
+  const diagnosisReady = analysis.completado && !!informe;
 
   return (
     <div className="h-full flex flex-col">

@@ -176,8 +176,8 @@ export function AnalysisSheet({
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-[11px] font-medium text-white/90">
-                      {analysis.progreso * 3}
-                      <span className="text-white/40 font-normal"> / 30</span>
+                      {analysis.progreso}
+                      <span className="text-white/40 font-normal"> / 10</span>
                     </span>
                     <span className="text-[10px] uppercase tracking-wider text-[#E8E4F5]/40">
                       {etapaLabels[analysis.etapa] || "Diagnóstico"}

@@ -193,12 +193,12 @@ export function ChatPanel({
                         </p>
 
                         <div className="flex items-center gap-3">
-                          {/* Score */}
+                          {/* Etapa */}
                           <div className="flex items-baseline gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04]">
                             <span className="text-sm font-semibold text-white">
-                              {progreso * 3}
+                              {progreso}
                             </span>
-                            <span className="text-[11px] text-white/40">/ 30 pts</span>
+                            <span className="text-[11px] text-white/40">/ 10</span>
                           </div>
 
                           {/* CTA */}
