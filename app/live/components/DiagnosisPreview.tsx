@@ -47,9 +47,9 @@ function parseMarkdownSections(raw: string) {
 }
 
 function getBarColor(score: number) {
-  if (score <= 4) return "#FF3CAC";
+  if (score <= 4) return "#EF5095";
   if (score <= 7) return "#FFC906";
-  return "#00D9A5";
+  return "#54D1A2";
 }
 
 const sectionIcon: Record<string, React.ReactNode> = {
@@ -113,9 +113,9 @@ function Thermometer({ label, score }: { label: string; score: number }) {
 function NivelBadgeLarge({ nivel }: { nivel: number | null }) {
   if (!nivel) return null;
   const niveles: Record<number, { nombre: string; icon: React.ReactNode; color: string; desc: string; tagline: string }> = {
-    1: { nombre: "El Lienzo en Blanco", icon: <Palette className="w-6 h-6" />, color: "#FF3CAC", desc: "Fuga Alta", tagline: "Construcción desde cero" },
+    1: { nombre: "El Lienzo en Blanco", icon: <Palette className="w-6 h-6" />, color: "#EF5095", desc: "Fuga Alta", tagline: "Construcción desde cero" },
     2: { nombre: "El Impresionista Difuso", icon: <Frame className="w-6 h-6" />, color: "#FFC906", desc: "Fuga Media", tagline: "Definición y optimización" },
-    3: { nombre: "El Visionario Encerrado", icon: <Landmark className="w-6 h-6" />, color: "#00D9A5", desc: "Fuga Baja", tagline: "Escala y automatización" },
+    3: { nombre: "El Visionario Encerrado", icon: <Landmark className="w-6 h-6" />, color: "#54D1A2", desc: "Fuga Baja", tagline: "Escala y automatización" },
   };
   const info = niveles[nivel];
   if (!info) return null;
@@ -164,7 +164,7 @@ function MarkdownSectionCard({
     >
       {/* Section header with icon */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7A2CFF]/20 to-[#FF3CAC]/20 flex items-center justify-center text-[#FFC906]">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#8E58A4]/20 to-[#EF5095]/20 flex items-center justify-center text-[#FFC906]">
           {sectionIcon[title] || <Sparkles className="w-4 h-4" />}
         </div>
         <h2 className="text-lg sm:text-xl font-bold text-[#FFC906] gradient-text">{title}</h2>
@@ -175,7 +175,7 @@ function MarkdownSectionCard({
           remarkPlugins={[remarkGfm, remarkBreaks]}
           rehypePlugins={[rehypeSanitize]}
           components={{
-            h1: ({ children }) => <h1 className="text-2xl font-bold text-[#DD256C] mt-4 mb-3 first:mt-0 glow-text">{children}</h1>,
+            h1: ({ children }) => <h1 className="text-2xl font-bold text-[#EF5095] mt-4 mb-3 first:mt-0 glow-text">{children}</h1>,
             h2: ({ children }) => <h2 className="text-lg font-semibold text-[#FFC906] mt-5 mb-2">{children}</h2>,
             h3: ({ children }) => <h3 className="text-base font-semibold text-[#CE8900] mt-4 mb-2">{children}</h3>,
             p: ({ children }) => <p className="text-[15px] text-white/80 leading-relaxed mb-4 last:mb-0">{children}</p>,
@@ -185,7 +185,7 @@ function MarkdownSectionCard({
             ol: ({ children }) => <ol className="space-y-2.5 mb-4 text-white/80">{children}</ol>,
             li: ({ children }) => (
               <li className="text-[15px] text-white/80 leading-relaxed flex items-start gap-2.5">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#7A2CFF] shrink-0 dot-glow" />
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#8E58A4] shrink-0 dot-glow" />
                 <span>{children}</span>
               </li>
             ),
@@ -194,14 +194,14 @@ function MarkdownSectionCard({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#00E0FF] hover:text-[#7A2CFF] underline underline-offset-4 decoration-[#00E0FF]/30 hover:decoration-[#7A2CFF] transition-all"
+                className="text-[#54D1A2] hover:text-[#8E58A4] underline underline-offset-4 decoration-[#54D1A2]/30 hover:decoration-[#8E58A4] transition-all"
               >
                 {children}
               </a>
             ),
             blockquote: ({ children }) => (
-              <blockquote className="relative my-5 pl-5 pr-4 py-3 bg-white/[0.02] rounded-r-2xl border-l-[3px] border-[#7A2CFF]">
-                <Quote className="absolute top-2 right-3 w-5 h-5 text-[#7A2CFF]/20" />
+              <blockquote className="relative my-5 pl-5 pr-4 py-3 bg-white/[0.02] rounded-r-2xl border-l-[3px] border-[#8E58A4]">
+                <Quote className="absolute top-2 right-3 w-5 h-5 text-[#8E58A4]/20" />
                 <div className="text-white/70 italic text-[15px] leading-relaxed">{children}</div>
               </blockquote>
             ),
@@ -212,7 +212,7 @@ function MarkdownSectionCard({
             tr: ({ children }) => <tr className="border-b border-white/[0.06] last:border-b-0">{children}</tr>,
             th: ({ children }) => <th className="px-4 py-3 font-medium">{children}</th>,
             td: ({ children }) => <td className="px-4 py-3">{children}</td>,
-            code: ({ children }) => <code className="px-1.5 py-0.5 rounded bg-white/[0.08] text-[#FF3CAC] text-[13px] font-mono">{children}</code>,
+            code: ({ children }) => <code className="px-1.5 py-0.5 rounded bg-white/[0.08] text-[#EF5095] text-[13px] font-mono">{children}</code>,
           }}
         >
           {body}
@@ -277,7 +277,7 @@ export function DiagnosisPreview({
             className="sticky top-0 z-50 bg-[#0B0B16]/80 backdrop-blur-xl border-b border-white/[0.06]"
           >
             {/* Gradient line */}
-            <div className="h-[2px] w-full bg-gradient-to-r from-[#7A2CFF] via-[#DD256C] to-[#FFC906]" />
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#8E58A4] via-[#EF5095] to-[#FFC906]" />
 
             <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-3 flex items-center justify-between">
               <div className="flex items-center gap-3.5">
@@ -338,7 +338,7 @@ export function DiagnosisPreview({
                   transition={{ duration: 0.55, delay: sections.length * 0.08 }}
                   className="gradient-border-card p-8 sm:p-10 text-center space-y-5"
                 >
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-[#DD256C]/20 to-[#7A2CFF]/20 flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-[#EF5095]/20 to-[#8E58A4]/20 flex items-center justify-center">
                     <Calendar className="w-7 h-7 text-[#FFC906]" />
                   </div>
                   <div>
@@ -428,7 +428,7 @@ export function DiagnosisPreview({
                   <p className="text-[11px] text-[#E8E4F5]/40 uppercase tracking-widest mb-2">Síntoma Detectado</p>
                   <p className="text-base font-semibold text-white flex items-center gap-2">
                     {camino === "A" ? (
-                      <Eye className="w-5 h-5 text-[#7A2CFF]" />
+                      <Eye className="w-5 h-5 text-[#8E58A4]" />
                     ) : (
                       <AlertTriangle className="w-5 h-5 text-[#FFC906]" />
                     )}

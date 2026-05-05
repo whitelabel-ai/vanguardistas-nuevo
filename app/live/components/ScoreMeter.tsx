@@ -33,7 +33,7 @@ export function ScoreMeter({ score, maxScore = 30 }: ScoreMeterProps) {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="absolute inset-y-0 left-0"
           style={{
-            background: "linear-gradient(90deg, #7A2CFF, #FF3CAC)",
+            background: "linear-gradient(90deg, #8E58A4, #EF5095)",
           }}
         />
       </div>

@@ -33,7 +33,7 @@ export function ProgressTracker({ etapa }: ProgressTrackerProps) {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] rounded-full"
           style={{
-            background: "linear-gradient(90deg, #7A2CFF, #FF3CAC, #00E0FF)",
+            background: "linear-gradient(90deg, #8E58A4, #EF5095, #54D1A2)",
           }}
         />
 
@@ -51,9 +51,9 @@ export function ProgressTracker({ etapa }: ProgressTrackerProps) {
                 transition={{ duration: 0.3 }}
                 className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
                   isCompleted
-                    ? "bg-[#7A2CFF] border-[#7A2CFF]"
+                    ? "bg-[#8E58A4] border-[#8E58A4]"
                     : isActive
-                    ? "bg-[#090A12] border-[#FF3CAC] dot-glow"
+                    ? "bg-[#090A12] border-[#EF5095] dot-glow"
                     : "bg-[#090A12] border-white/20"
                 }`}
               >
@@ -61,7 +61,7 @@ export function ProgressTracker({ etapa }: ProgressTrackerProps) {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-1.5 h-1.5 rounded-full bg-[#FF3CAC]"
+                    className="w-1.5 h-1.5 rounded-full bg-[#EF5095]"
                   />
                 )}
               </motion.div>
@@ -70,7 +70,7 @@ export function ProgressTracker({ etapa }: ProgressTrackerProps) {
               <span
                 className={`text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
-                    ? "text-[#FF3CAC]"
+                    ? "text-[#EF5095]"
                     : isCompleted
                     ? "text-white/80"
                     : "text-white/30"
