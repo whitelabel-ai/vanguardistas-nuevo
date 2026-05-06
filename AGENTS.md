@@ -58,7 +58,17 @@ components/
   chat/              Componentes de chat reutilizados en /legacy
   layout/            Header, Footer, Analytics
   ui/                Primitivos shadcn-style (Button, Dialog, Textarea)
+lib/
+  prompts.ts         Loader cacheado de prompts desde `prompts/*.md`
+  markdown.ts, utils.ts
+prompts/
+  qubra-chat.md      System prompt del agente Qubra (chat-stream)
+  qubra-analyze.md   System prompt del analizador (analyze)
+  qubra-informe.md   System prompt del redactor (informe)
+  qubra-greeter.md   System prompt para n8n (agente de bienvenida)
 ```
+
+**Cómo se cargan los prompts**: cada route hace `loadPrompt("qubra-<nombre>")` a nivel módulo. La primera lectura golpea disco, las siguientes son lookup en `Map`. Los `.md` son fuente de verdad; **editarlos directamente** (no hay que tocar TS para iterar tono o reglas). Para que Vercel/serverless los incluya en el bundle ver `outputFileTracingIncludes` en `next.config.ts`.
 
 ## Variables de entorno
 
