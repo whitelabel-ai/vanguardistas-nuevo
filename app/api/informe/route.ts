@@ -13,8 +13,8 @@ const informePrompt = loadPrompt("qubra-informe");
 const informeSchema = z.object({
   userData: z.object({
     nombre: z.string().max(200),
-    empresa: z.string().max(200).optional(),
-    email: z.string().max(200).optional(),
+    empresa: z.string().max(200).nullish(),
+    email: z.string().max(200).nullish(),
   }),
   respuestas: z.record(z.string(), z.string().max(2000)),
   camino: z.enum(["A", "B"]).nullable(),
