@@ -97,6 +97,10 @@ export function LiveContainer() {
     }
   }, [generateInforme]);
 
+  /* ── Push dataLayer events for GTM ── */
+  const pushedCompletedRef = useRef(false);
+  const pushedSentRef = useRef(false);
+
   /* ── Auto-trigger diagnosis when completed ──
      Se dispara una vez por cada correo distinto. Si el usuario corrige el
      correo (typo), el nuevo no estará en `autoSentEmailsRef` y volveremos a
@@ -113,6 +117,17 @@ export function LiveContainer() {
     // Marcamos antes de la llamada async para evitar re-disparos por
     // re-renders mientras la solicitud está en vuelo.
     autoSentEmailsRef.current.add(email);
+    // GTM: diagnóstico completado (solo una vez por sesión)
+    if (!pushedCompletedRef.current && typeof window !== "undefined" && window.dataLayer) {
+      window.dataLayer.push({
+        event: "diagnostico_completado",
+        email,
+        nombre,
+        camino: analysis.camino,
+        fuga_principal: analysis.fugaPrincipal,
+      });
+      pushedCompletedRef.current = true;
+    }
 
     // Si ya se envió a este correo en esta sesión o estamos dentro del rate
     // limit (5 min), no reenviamos: solo mostramos el diagnóstico.
@@ -160,6 +175,15 @@ export function LiveContainer() {
 
     if (sendResult.success) {
       setShowPreview(true);
+      // GTM: informe enviado (solo una vez por sesión)
+      if (!pushedSentRef.current && typeof window !== "undefined" && window.dataLayer) {
+        window.dataLayer.push({
+          event: "informe_enviado",
+          email: analysis.datosUsuario.email?.trim().toLowerCase(),
+          nombre: analysis.datosUsuario.nombre,
+        });
+        pushedSentRef.current = true;
+      }
     }
 
     // Importante: limpiar sendResult para evitar re-disparo
