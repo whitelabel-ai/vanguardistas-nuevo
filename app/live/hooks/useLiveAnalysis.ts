@@ -42,7 +42,11 @@ const SENT_EMAILS_KEY = "qubra-sent-emails";
 const LAST_SENT_PREFIX = "qubra-last-sent-";
 const SESSION_SENT_PREFIX = "qubra-sent-this-session-";
 const INFORME_PREFIX = "qubra-informe-";
-const RATE_LIMIT_HOURS = 24;
+// Configurable por env. Debe coincidir con SEND_DIAGNOSIS_RATE_LIMIT_MINUTES
+// del servidor para que el mensaje al usuario sea consistente.
+const RATE_LIMIT_MINUTES =
+  Number(process.env.NEXT_PUBLIC_SEND_DIAGNOSIS_RATE_LIMIT_MINUTES) || 5;
+const RATE_LIMIT_MS = RATE_LIMIT_MINUTES * 60 * 1000;
 
 // ── Capa 1: localStorage persistente ──
 function getSentEmails(): string[] {
@@ -90,7 +94,7 @@ function isSessionSent(email: string): boolean {
   }
 }
 
-// ── Capa 3: rate limiting por timestamp (24h) ──
+// ── Capa 3: rate limiting por timestamp (5 min) ──
 function markLastSent(email: string) {
   if (typeof window === "undefined") return;
   try {
@@ -98,21 +102,34 @@ function markLastSent(email: string) {
   } catch {}
 }
 
-function getHoursSinceLastSent(email: string): number {
+function getMsSinceLastSent(email: string): number {
   if (typeof window === "undefined") return Infinity;
   try {
     const raw = localStorage.getItem(LAST_SENT_PREFIX + email);
     if (!raw) return Infinity;
     const lastSent = parseInt(raw, 10);
     if (isNaN(lastSent)) return Infinity;
-    return (Date.now() - lastSent) / 3600000; // ms → horas
+    return Date.now() - lastSent;
   } catch {
     return Infinity;
   }
 }
 
 function isRateLimited(email: string): boolean {
-  return getHoursSinceLastSent(email) < RATE_LIMIT_HOURS;
+  return getMsSinceLastSent(email) < RATE_LIMIT_MS;
+}
+
+function formatTimeLeft(msLeft: number): string {
+  const minutesLeft = Math.max(1, Math.ceil(msLeft / 60000));
+  if (minutesLeft >= 1440) {
+    const days = Math.ceil(minutesLeft / 1440);
+    return `${days} ${days === 1 ? "día" : "días"}`;
+  }
+  if (minutesLeft >= 60) {
+    const hours = Math.ceil(minutesLeft / 60);
+    return `${hours} ${hours === 1 ? "hora" : "horas"}`;
+  }
+  return `${minutesLeft} ${minutesLeft === 1 ? "minuto" : "minutos"}`;
 }
 
 // ── Persistencia de informe ──
@@ -300,12 +317,14 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
 
     const email = analysis.datosUsuario.email;
 
-    // Rate limiting: máximo 1 envío cada 24h por email
+    // Rate limiting: ventana configurable por env (default 5 min) por email.
+    // Si el usuario corrige el correo, se enviará al nuevo sin esperar
+    // (el rate limit es por dirección, no global).
     if (isRateLimited(email)) {
-      const hours = Math.ceil(RATE_LIMIT_HOURS - getHoursSinceLastSent(email));
+      const msLeft = RATE_LIMIT_MS - getMsSinceLastSent(email);
       setSendResult({
         success: false,
-        message: `Ya enviamos un diagnóstico a este correo recientemente. Puedes reenviarlo manualmente desde el panel.`,
+        message: `Ya enviamos un diagnóstico a ${email} hace poco. Intenta de nuevo en ${formatTimeLeft(msLeft)}.`,
       });
       return null;
     }
@@ -372,9 +391,9 @@ export function useLiveAnalysis(messages: LiveMessage[]) {
     generateInforme,
     sendDiagnosis,
     loadInforme,
-    isEmailSent: (email: string) => isEmailSent(email),
-    isSessionSent: (email: string) => isSessionSent(email),
-    isRateLimited: (email: string) => isRateLimited(email),
-    markEmailAsSent: (email: string) => markEmailAsSent(email),
+    isEmailSent,
+    isSessionSent,
+    isRateLimited,
+    getMsSinceLastSent,
   };
 }

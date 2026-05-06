@@ -28,8 +28,13 @@ const sendDiagnosisSchema = z.object({
   queVenden: z.string().optional(),
 });
 
-/* ── Rate limiting en memoria (server-side) ── */
-const RATE_LIMIT_MS = 24 * 60 * 60 * 1000; // 24 horas
+/* ── Rate limiting en memoria (server-side) ──
+   Ventana configurable (default 5 min) por dirección de correo. Es defensa
+   secundaria contra clicks repetidos: el rate limit "real" lo aplica el
+   cliente con localStorage y persiste entre requests. Cambiar el correo
+   bypassa el límite (la clave es el email). */
+const RATE_LIMIT_MINUTES = Number(process.env.SEND_DIAGNOSIS_RATE_LIMIT_MINUTES) || 5;
+const RATE_LIMIT_MS = RATE_LIMIT_MINUTES * 60 * 1000;
 const lastSentMap = new Map<string, number>();
 
 function isRateLimited(email: string): boolean {
@@ -59,13 +64,13 @@ export async function POST(request: NextRequest) {
       queVenden,
     } = sendDiagnosisSchema.parse(body);
 
-    /* ── Rate limit server-side ── */
+    /* ── Rate limit server-side (5 min por correo) ── */
     if (isRateLimited(userData.email)) {
       console.warn("Rate limited:", userData.email);
       return Response.json(
         {
           success: false,
-          message: "Ya enviamos un diagnóstico a este correo recientemente. Puedes reenviarlo manualmente desde el panel.",
+          message: "Acabamos de enviar un diagnóstico a este correo. Intenta de nuevo en unos minutos.",
         },
         { status: 429 }
       );
