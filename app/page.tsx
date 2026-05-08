@@ -64,7 +64,7 @@ export default function HomePage() {
               <motion.h1
                 variants={stagger(0.2)}
                 initial="hidden" animate="show"
-                className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,3.2vw,42px)] leading-[1.12] tracking-tight mb-5"
+                className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-[1.12] tracking-tight mb-5"
                 style={{ letterSpacing: "-0.025em" }}
               >
                 Tu negocio no tiene un problema de ventas.
@@ -136,7 +136,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp}>
             <Label>El problema real</Label>
-            <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight mb-1">
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight mb-1">
               ¿Te suena esto?
             </h2>
             <div className="w-12 h-0.5 bg-gradient-to-r from-[#EF5095] to-[#E2B100] rounded mt-5 mb-10" />
@@ -180,7 +180,7 @@ export default function HomePage() {
             {/* Left — steps */}
             <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp} className="flex flex-col">
               <Label>Qubra — IA de diagnóstico</Label>
-              <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight mb-4">
+              <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight mb-4">
                 Antes de invertir un peso, descubre exactamente{" "}
                 <span className="text-fucsia">qué está fallando.</span>
               </h2>
@@ -206,11 +206,11 @@ export default function HomePage() {
                     {i < arr.length - 1 && (
                       <div className="absolute left-[19px] top-10 bottom-0 w-px bg-gradient-to-b from-verde/40 to-verde/[0.05]" />
                     )}
-                    <div className="relative z-10 flex-shrink-0 w-10 h-10 rounded-full bg-verde/[0.12] border border-verde/30 flex items-center justify-center font-[family-name:var(--font-syne)] font-extrabold text-[14px] text-verde">
+                    <div className="relative z-10 flex-shrink-0 w-10 h-10 rounded-full bg-verde/[0.12] border border-verde/30 flex items-center justify-center font-[family-name:var(--font-anek-odia)] font-extrabold text-[14px] text-verde">
                       {step.n}
                     </div>
                     <div className="pt-2">
-                      <h4 className="font-[family-name:var(--font-syne)] font-bold text-[16px] text-white mb-1">{step.title}</h4>
+                      <h4 className="font-[family-name:var(--font-anek-odia)] font-bold text-[16px] text-white mb-1">{step.title}</h4>
                       <p className="text-[14px] text-white/45 leading-relaxed">{step.desc}</p>
                     </div>
                   </motion.div>
@@ -232,7 +232,7 @@ export default function HomePage() {
                 IA gratuita
               </div>
 
-              <h3 className="font-[family-name:var(--font-syne)] font-extrabold text-[22px] leading-snug tracking-tight mb-3">
+              <h3 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[22px] leading-snug tracking-tight mb-3">
                 Qubra te ve donde otros no llegan.
               </h3>
 
@@ -248,7 +248,7 @@ export default function HomePage() {
                   { val: "$0", label: "costo" },
                 ].map((s, i) => (
                   <div key={s.label} className={`flex-1 text-center ${i > 0 ? "border-l border-white/[0.06]" : ""}`}>
-                    <span className="block font-[family-name:var(--font-syne)] font-extrabold text-[28px] text-fucsia tracking-tight">{s.val}</span>
+                    <span className="block font-[family-name:var(--font-anek-odia)] font-extrabold text-[28px] text-fucsia tracking-tight">{s.val}</span>
                     <span className="text-[11px] uppercase tracking-[0.1em] text-white/40">{s.label}</span>
                   </div>
                 ))}
@@ -292,7 +292,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp} className="text-center max-w-[640px] mx-auto mb-12">
             <Label>Rutas de transformación</Label>
-            <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight">
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight">
               No somos una agencia.<br />
               Somos el equipo que<br />
               <span className="text-fucsia">las agencias no te dieron.</span>
@@ -333,7 +333,7 @@ export default function HomePage() {
                 className="group relative bg-[rgba(40,40,40,0.8)] border border-white/[0.06] rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-transform duration-250"
                 style={{ "--card-color": svc.color } as React.CSSProperties}
               >
-                <span className="absolute top-5 right-5 font-[family-name:var(--font-syne)] font-extrabold text-[80px] leading-none text-white/[0.03] select-none">
+                <span className="absolute top-5 right-5 font-[family-name:var(--font-anek-odia)] font-extrabold text-[80px] leading-none text-white/[0.03] select-none">
                   {svc.num}
                 </span>
                 <div
@@ -343,7 +343,7 @@ export default function HomePage() {
                   {svc.icon}
                 </div>
                 <p className="text-[10px] font-medium tracking-[0.15em] uppercase mb-2" style={{ color: svc.color }}>{svc.badge}</p>
-                <h3 className="font-[family-name:var(--font-syne)] font-extrabold text-[22px] tracking-tight mb-2">{svc.title}</h3>
+                <h3 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[22px] tracking-tight mb-2">{svc.title}</h3>
                 <p className="text-[13px] italic text-white/45 mb-4 border-l-2 pl-3" style={{ borderColor: svc.color }}>{svc.tagline}</p>
                 <p className="text-[14px] text-white/60 leading-relaxed mb-5">{svc.desc}</p>
                 <ul className="flex flex-col gap-2">
@@ -367,7 +367,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp}>
             <Label>Metodología artística</Label>
-            <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight mb-4">
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight mb-4">
               Arte + Psicología<br />+ Estrategia.
             </h2>
             <p className="text-[16px] text-white/50 leading-relaxed max-w-[600px] mb-10">
@@ -406,7 +406,7 @@ export default function HomePage() {
                   {m.icon}
                 </div>
                 <div>
-                  <h4 className="font-[family-name:var(--font-syne)] font-bold text-[17px] mb-1">
+                  <h4 className="font-[family-name:var(--font-anek-odia)] font-bold text-[17px] mb-1">
                     {m.title} — <span style={{ color: m.color }}>{m.subtitle}</span>
                   </h4>
                   <p className="text-[14px] text-white/45">{m.desc}</p>
@@ -422,7 +422,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp} className="mb-10">
             <Label>¿Para quién es esto?</Label>
-            <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight">
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight">
               Dependiendo de dónde estés,<br />tu ruta es diferente.
             </h2>
           </motion.div>
@@ -430,28 +430,28 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               {
-                tag: "Perfil A · 35 años · Bogotá",
+		tag: "",
                 title: "El empresario que quiere digitalizarse sin perderse",
                 desc: "Llevas años construyendo tu negocio y sientes que el mundo digital te dejó atrás. No quieres tecnicismos. Quieres vender más, sin perder el control de lo que ya construiste.",
                 frenos: ["Malas experiencias previas con agencias que desaparecieron", "Miedo a invertir dinero y no ver resultados", "Lenguaje técnico que no entiende ni quiere aprender"],
                 closing: <><strong className="text-white">Esto fue diseñado para ti.</strong><br />Empezamos con diagnóstico gratis. Sin tecnicismos. Con acompañamiento real en cada paso.</>,
               },
               {
-                tag: "Perfil B · 42 años · Bogotá",
-                title: "La fundadora cuya marca ya no la representa",
-                desc: "Tu empresa funciona. Llevas años en el mercado. Pero sientes que tu comunicación digital no refleja tu valor actual. Sabes que puedes impactar más, pero los proveedores anteriores nunca captaron tu esencia.",
-                frenos: ["Proveedores que entregaban trabajo correcto pero sin alma", "Comunicación desactualizada que no convierte aunque funcione", "Falta de dirección estratégica clara para el siguiente nivel"],
+		tag: "",
+		title: "Vendes mucho. Ahora elevemos tu experiencia a un nivel premium.",
+		desc: "Tu empresa funciona y tienes un flujo constante de clientes. El reto ya no es vender más, es vender mejor. Quieres lograr que tus clientes no solo compren, sino que se enamoren y se conviertan en embajadores de tu marca.",
+		frenos: ["Procesos que cumplen su función, pero no generan el \"efecto wow\" que exige un cliente premium", "Ventas transaccionales, pero baja fidelización a largo plazo", "Falta de una estructura curada que entregue una experiencia de alto valor desde el primer clic hasta el cierre"],
                 closing: <><strong className="text-white">Esto también fue diseñado para ti.</strong><br />Una alianza profesional con visión compartida, estructura clara y compromiso de largo plazo.</>,
               },
             ].map((p, i) => (
               <motion.div
-                key={p.tag}
+                key={i}
                 variants={stagger(i * 0.12)}
                 initial="hidden" whileInView="show" viewport={vp}
                 className="bg-[rgba(40,40,40,0.8)] border border-white/[0.06] rounded-2xl p-7"
               >
-                <p className="text-[11px] font-medium tracking-[0.12em] uppercase text-fucsia mb-3">{p.tag}</p>
-                <h3 className="font-[family-name:var(--font-syne)] font-extrabold text-[20px] leading-snug tracking-tight mb-4">{p.title}</h3>
+                {p.tag && <p className="text-[11px] font-medium tracking-[0.12em] uppercase text-fucsia mb-3">{p.tag}</p>}
+                <h3 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[20px] leading-snug tracking-tight mb-4">{p.title}</h3>
                 <p className="text-[14px] text-white/50 leading-relaxed mb-5">{p.desc}</p>
                 <ul className="flex flex-col gap-2 mb-6">
                   {p.frenos.map((f) => (
@@ -474,7 +474,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp} className="text-center max-w-[560px] mx-auto mb-14">
             <Label>Cómo funciona</Label>
-            <h2 className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(24px,4vw,42px)] leading-tight tracking-tight">
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight">
               Tres pasos.<br />Sin paquetes genéricos.
             </h2>
           </motion.div>
@@ -492,12 +492,12 @@ export default function HomePage() {
                 className="flex flex-col gap-4"
               >
                 <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center font-[family-name:var(--font-syne)] font-extrabold text-[18px]"
+                  className="w-14 h-14 rounded-full flex items-center justify-center font-[family-name:var(--font-anek-odia)] font-extrabold text-[18px]"
                   style={{ background: step.bg, border: `1px solid ${step.border}`, color: step.color }}
                 >
                   {step.n}
                 </div>
-                <h4 className="font-[family-name:var(--font-syne)] font-extrabold text-[20px] tracking-tight">{step.title}</h4>
+                <h4 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[20px] tracking-tight">{step.title}</h4>
                 <p className="text-[14px] text-white/45 leading-relaxed">{step.desc}</p>
                 <span className="inline-block text-[11px] font-medium tracking-[0.1em] uppercase text-white/30 border border-white/[0.08] rounded-full px-3 py-1 w-fit">
                   {step.tag}
@@ -508,13 +508,117 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 8. CTA FINAL ────────────────────────────────────── */}
+      {/* ── 8. TESTIMONIOS ──────────────────────────────────── */}
+      <section className="py-20 border-t border-white/[0.04] bg-white/[0.015] relative overflow-hidden">
+        {/* Decorative shapes */}
+        <div className="pointer-events-none absolute top-[6%] -right-[50px]">
+          <Image src="/img/home-10/testimonial/testimonial-shape-1.png" alt="" width={90} height={90} className="opacity-25" />
+        </div>
+        <div className="pointer-events-none absolute bottom-[8%] -left-[30px]">
+          <Image src="/img/home-10/testimonial/testimonial-shape-2.png" alt="" width={110} height={110} className="opacity-20" />
+        </div>
+
+        <div className="max-w-[1200px] mx-auto px-5 relative z-10">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={vp} className="text-center max-w-[640px] mx-auto mb-14">
+            <Label>Testimonios</Label>
+            <h2 className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight">
+              Resultados reales.<br />En sus palabras.
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {[
+              {
+                name: "Jorge Martínez",
+                cargo: "Dueño de Pyme",
+                img: 4,
+                transformacion: "De cero → vitrina digital",
+                color: "#54D1A2",
+                pullQuote: "Pasamos de la nada absoluta a tener una vitrina digital que nos representa con orgullo.",
+                testimonio: "No existíamos en internet y el miedo a vernos genéricos nos frenaba. Vanguardistas le dio vida digital a nuestra empresa desde cero. No solo nos entregaron una página web; nos dieron una herramienta con diseño dinámico y textos persuasivos que realmente capturan nuestra voz. Ya está atrayendo leads.",
+              },
+              {
+                name: "Camila Echeverry",
+                cargo: "Directora de Marca",
+                img: 1,
+                transformacion: "De genérico → experiencia premium",
+                color: "#EF5095",
+                pullQuote: "El precio ha dejado de ser una objeción porque el trato es impecable.",
+                testimonio: "Sentíamos que nuestro servicio en persona era de lujo, pero en lo digital éramos uno más del montón. Vanguardistas no solo reconstruyó nuestra narrativa, sino que rediseñó cada punto de contacto con el cliente. Pasamos de tener un proceso de ventas frío a entregar una experiencia premium donde cada mensaje respira nuestra esencia.",
+              },
+              {
+                name: "Felipe Ruiz",
+                cargo: "Director Comercial",
+                img: 2,
+                transformacion: "De invisible → referente B2B",
+                color: "#8E58A4",
+                pullQuote: "Nuestra imagen finalmente está a la altura de la calidad de nuestras consultorías.",
+                testimonio: "Proyectar autoridad en el mundo B2B sin perder nuestra alma parecía imposible hasta que aplicamos su metodología. Lograron aterrizar nuestro propósito y conectarlo con lo que nuestros clientes corporativos realmente necesitaban ver. El resultado fue una identidad visual que impacta y genera confianza inmediata.",
+              },
+              {
+                name: "María Holguín",
+                cargo: "Gerente de Marca",
+                img: 3,
+                transformacion: "De curso → activo de marca",
+                color: "#FFC906",
+                pullQuote: "No es solo un curso grabado; es una pieza de comunicación que posiciona nuestra marca.",
+                testimonio: "Grabar un curso completo es un reto, pero lograr que cada palabra, el escenario y el contenido se sientan como una sola marca es otro nivel. Gracias a la dirección estratégica, logramos una narrativa coherente donde el fondo y la forma se alinean perfectamente en cada lección.",
+              },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                variants={stagger(i * 0.1)}
+                initial="hidden" whileInView="show" viewport={vp}
+                className="group relative bg-[rgba(40,40,40,0.8)] border border-white/[0.06] rounded-2xl p-7 hover:border-white/15 transition-colors flex flex-col"
+              >
+                {/* Before/after badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[10px] font-medium tracking-[0.06em] uppercase text-white/45 w-fit mb-4">
+                  <span style={{ color: t.color }}>◆</span>
+                  {t.transformacion}
+                </div>
+
+                {/* Pull quote */}
+                <p className="font-[family-name:var(--font-anek-odia)] text-[22px] leading-snug tracking-tight italic mb-3" style={{ color: t.color }}>
+                  &ldquo;{t.pullQuote}&rdquo;
+                </p>
+
+                {/* Testimonial body */}
+                <p className="text-[13px] text-white/50 leading-relaxed mb-5 flex-1">
+                  {t.testimonio}
+                </p>
+
+                {/* Avatar + Name */}
+                <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-white/[0.06] border border-white/[0.08] flex-shrink-0">
+                    <Image
+                      src={`/img/home-10/testimonial/testimonial-item-${t.img}.png`}
+                      alt={t.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-medium text-white leading-none mb-0.5">{t.name}</p>
+                    <p className="text-[11px] text-white/35 leading-none">{t.cargo}</p>
+                  </div>
+                </div>
+
+                {/* Hover top line */}
+                <div className="absolute top-0 left-0 right-0 h-px rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(to right, ${t.color}, transparent)` }} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 9. CTA FINAL ────────────────────────────────────── */}
       <section className="py-24 relative overflow-hidden">
         <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-fucsia/[0.10] blur-[120px]" />
         <div className="max-w-[680px] mx-auto px-5 text-center relative z-10">
           <motion.h2
             variants={fadeUp} initial="hidden" whileInView="show" viewport={vp}
-            className="font-[family-name:var(--font-syne)] font-extrabold text-[clamp(32px,5vw,52px)] leading-tight tracking-tight mb-5"
+            className="font-[family-name:var(--font-anek-odia)] font-extrabold text-[clamp(28px,5.5vw,64px)] leading-tight tracking-tight mb-5"
           >
             El primer paso<br />no cuesta nada.<br />El siguiente,<br />
             <span className="text-fucsia">no podrás evitarlo.</span>

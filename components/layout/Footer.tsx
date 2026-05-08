@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -50,6 +52,15 @@ export function Footer() {
                   rel="noopener noreferrer"
                   aria-label={link.name}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.dataLayer) {
+              window.dataLayer.push({
+                event: "social_click",
+                social_network: link.name,
+                social_url: link.href,
+              });
+            }
+          }}
                 >
                   <Image
                     src={link.icon}
