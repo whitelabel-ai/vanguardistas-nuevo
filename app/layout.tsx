@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Lato, Anek_Odia } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { ConditionalFooter } from "@/components/layout/ConditionalFooter";
 import { Analytics, GtmNoScript } from "@/components/layout/Analytics";
 
 const lato = Lato({
@@ -42,7 +42,7 @@ export default function RootLayout({
  <GtmNoScript />
         <Header />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );
