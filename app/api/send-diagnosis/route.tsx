@@ -3,6 +3,118 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { z } from "zod";
 import { DiagnosticoPDF } from "../generate-pdf/DiagnosticoPDF";
 
+/* ── Odoo CRM Lead Creation ── */
+async function createOdooLead(data: {
+  nombre: string;
+  email: string;
+  empresa?: string;
+  scores: { marketing: number; experiencia: number; global: number };
+  nivel: number | null;
+  esClientePotencial: boolean;
+  fugaPrincipal: string;
+  intervencionUrgente: string;
+  camino: string | null;
+  informe: string;
+  sector?: string;
+  queVenden?: string;
+}) {
+  const odooUrl = process.env.ODOO_URL;
+  const odooDb = process.env.ODOO_DB;
+  const odooUser = process.env.ODOO_USER;
+  const odooApiKey = process.env.ODOO_API_KEY;
+
+  if (!odooUrl || !odooDb || !odooUser || !odooApiKey) {
+    console.warn("Odoo env vars missing, skipping lead creation");
+    return;
+  }
+
+  const common = `${odooUrl}/xmlrpc/2/common`;
+  const object = `${odooUrl}/xmlrpc/2/object`;
+
+  try {
+    // 1. Authenticate
+    const authRes = await fetch(common, {
+      method: "POST",
+      headers: { "Content-Type": "text/xml" },
+      body: `<?xml version="1.0"?>
+<methodCall>
+  <methodName>authenticate</methodName>
+  <params>
+    <param><value><string>${odooDb}</string></value></param>
+    <param><value><string>${odooUser}</string></value></param>
+    <param><value><string>${odooApiKey}</string></value></param>
+    <param><value><struct></struct></value></param>
+  </params>
+</methodCall>`,
+    });
+    const authText = await authRes.text();
+    const uidMatch = authText.match(/<int>(\d+)<\/int>/);
+    if (!uidMatch) {
+      console.warn("Odoo auth failed, skipping lead", authText.slice(0, 200));
+      return;
+    }
+    const uid = parseInt(uidMatch[1]);
+
+    // 2. Build description
+    const descripcion = [
+      `--- Diagnóstico Qubra ---`,
+      `Camino: ${data.camino || "N/A"}`,
+      `Score Marketing: ${data.scores.marketing}`,
+      `Score Experiencia: ${data.scores.experiencia}`,
+      `Score Global: ${data.scores.global}`,
+      `Nivel: ${data.nivel ?? "N/A"}`,
+      `Cliente Potencial: ${data.esClientePotencial ? "Sí" : "No"}`,
+      `Fuga Principal: ${data.fugaPrincipal}`,
+      `Intervención Urgente: ${data.intervencionUrgente}`,
+      `Sector: ${data.sector || "N/A"}`,
+      `Qué Venden: ${data.queVenden || "N/A"}`,
+      ``,
+      `--- Informe ---`,
+      data.informe,
+    ].join("\n");
+
+    // 3. Create lead with stage_id=1 (Fase 1: Entrada y Diagnostico Qubra)
+    const createRes = await fetch(object, {
+      method: "POST",
+      headers: { "Content-Type": "text/xml" },
+      body: `<?xml version="1.0"?>
+<methodCall>
+  <methodName>execute_kw</methodName>
+  <params>
+    <param><value><string>${odooDb}</string></value></param>
+    <param><value><int>${uid}</int></value></param>
+    <param><value><string>${odooApiKey}</string></value></param>
+    <param><value><string>crm.lead</string></value></param>
+    <param><value><string>create</string></value></param>
+    <param><value><array><data>
+      <value><struct>
+        <member><name>name</name><value><string>${data.nombre} - Diagnóstico Qubra</string></value></member>
+        <member><name>contact_name</name><value><string>${data.nombre}</string></value></member>
+        <member><name>email_from</name><value><string>${data.email}</string></value></member>
+        <member><name>partner_name</name><value><string>${data.empresa || ""}</string></value></member>
+        <member><name>stage_id</name><value><int>1</int></value></member>
+        <member><name>description</name><value><string>${escXml(descripcion)}</string></value></member>
+      </struct></value>
+    </data></array></param>
+  </params>
+</methodCall>`,
+    });
+    const createText = await createRes.text();
+    console.log("Odoo lead created, response:", createText.slice(0, 100));
+  } catch (err) {
+    console.warn("Odoo lead creation failed (non-blocking):", err);
+  }
+}
+
+function escXml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -156,6 +268,22 @@ export async function POST(request: NextRequest) {
 
     /* ── Marcar como enviado solo si n8n respondió OK ── */
     markAsSent(userData.email);
+
+    /* ── Crear lead en Odoo (no bloqueante: si falla, el diagnóstico ya se envió) ── */
+    createOdooLead({
+      nombre: userData.nombre,
+      email: userData.email,
+      empresa: userData.empresa,
+      scores,
+      nivel,
+      esClientePotencial,
+      fugaPrincipal,
+      intervencionUrgente,
+      camino,
+      informe,
+      sector,
+      queVenden,
+    });
 
     const data = await response.json();
     return Response.json({
