@@ -74,19 +74,21 @@ async function createOdooLead(data: {
     ].join("\n");
 
     // 3. Create lead with stage_id=1 (Fase 1: Entrada y Diagnostico Qubra)
+    // NOTA: usamos `execute` en lugar de `execute_kw` porque Odoo 19 tiene
+    // un bug de parseo XML con execute_kw (mismatched tag en <data>).
     const createRes = await fetch(object, {
       method: "POST",
       headers: { "Content-Type": "text/xml" },
       body: `<?xml version="1.0"?>
 <methodCall>
-  <methodName>execute_kw</methodName>
+  <methodName>execute</methodName>
   <params>
     <param><value><string>${odooDb}</string></value></param>
     <param><value><int>${uid}</int></value></param>
     <param><value><string>${odooApiKey}</string></value></param>
     <param><value><string>crm.lead</string></value></param>
     <param><value><string>create</string></value></param>
-    <param><value><array><data>
+    <param>
       <value><struct>
         <member><name>name</name><value><string>${data.nombre} - Diagnóstico Qubra</string></value></member>
         <member><name>contact_name</name><value><string>${data.nombre}</string></value></member>
@@ -95,7 +97,7 @@ async function createOdooLead(data: {
         <member><name>stage_id</name><value><int>1</int></value></member>
         <member><name>description</name><value><string>${escXml(descripcion)}</string></value></member>
       </struct></value>
-    </data></array></param>
+    </param>
   </params>
 </methodCall>`,
     });
