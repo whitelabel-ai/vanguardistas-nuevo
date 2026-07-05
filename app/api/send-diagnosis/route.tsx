@@ -73,33 +73,18 @@ async function createOdooLead(data: {
       data.informe,
     ].join("\n");
 
-    // 3. Create lead with stage_id=1 (Fase 1: Entrada y Diagnostico Qubra)
-    // NOTA: usamos `execute` en lugar de `execute_kw` porque Odoo 19 tiene
-    // un bug de parseo XML con execute_kw (mismatched tag en <data>).
+    // 3. Create lead with stage_id=1 (Fase 1: Entrada y Diagnostico (Qubra))
+    // NOTA: XML-RPC en Odoo 19 no parsea bien template literals multi-línea.
+    // El XML debe ir en UNA SOLA línea o falla con "mismatched tag".
+    const descEscaped = escXml(descripcion);
+    const leadName = escXml(`${data.nombre} - Diagnóstico Qubra`);
+    const contactName = escXml(data.nombre);
+    const email = escXml(data.email);
+    const empresa = escXml(data.empresa || "");
     const createRes = await fetch(object, {
       method: "POST",
       headers: { "Content-Type": "text/xml" },
-      body: `<?xml version="1.0"?>
-<methodCall>
-  <methodName>execute</methodName>
-  <params>
-    <param><value><string>${odooDb}</string></value></param>
-    <param><value><int>${uid}</int></value></param>
-    <param><value><string>${odooApiKey}</string></value></param>
-    <param><value><string>crm.lead</string></value></param>
-    <param><value><string>create</string></value></param>
-    <param>
-      <value><struct>
-        <member><name>name</name><value><string>${data.nombre} - Diagnóstico Qubra</string></value></member>
-        <member><name>contact_name</name><value><string>${data.nombre}</string></value></member>
-        <member><name>email_from</name><value><string>${data.email}</string></value></member>
-        <member><name>partner_name</name><value><string>${data.empresa || ""}</string></value></member>
-        <member><name>stage_id</name><value><int>1</int></value></member>
-        <member><name>description</name><value><string>${escXml(descripcion)}</string></value></member>
-      </struct></value>
-    </param>
-  </params>
-</methodCall>`,
+      body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>create</string></value></param><param><value><array><data><value><struct><member><name>name</name><value><string>${leadName}</string></value></member><member><name>contact_name</name><value><string>${contactName}</string></value></member><member><name>email_from</name><value><string>${email}</string></value></member><member><name>partner_name</name><value><string>${empresa}</string></value></member><member><name>stage_id</name><value><int>1</int></value></member><member><name>description</name><value><string>${descEscaped}</string></value></member></struct></value></data></array></value></param></params></methodCall>`,
     });
     const createText = await createRes.text();
     console.log("Odoo lead created, response:", createText.slice(0, 100));
