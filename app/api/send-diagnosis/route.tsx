@@ -98,7 +98,7 @@ async function createOdooLead(data: {
         body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>write</string></value></param><param><value><array><data><value><array><data><value><int>${leadId}</int></value></data></array></value></data></array></value></param><param><value><struct><member><name>x_qubra_score</name><value><int>${scoreValue}</int></value></member></struct></value></param></params></methodCall>`,
       });
       const writeText = await writeRes.text();
-      console.log("Odoo x_qubra_score write:", writeText.slice(0, 100), "(score:", scoreValue, ")");
+      console.log("Odoo x_qubra_score write response:", writeText.slice(0, 500));
     }
   } catch (err) {
     console.warn("Odoo lead creation failed (non-blocking):", err);
