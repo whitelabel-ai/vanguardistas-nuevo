@@ -1,45 +1,57 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* ── Vanguardistas brand tokens ── */
+  /* ── Vanguardistas brand tokens v2 ── */
+  /* FUCSHEA: medrado con matriz fucsia (#EF5095 → OKLCH ~ 66.7% 0.22 14.7) */
   --color-fucsia:       #EF5095;
   --color-verde:        #54D1A2;
   --color-amarillo:     #FFC906;
   --color-morado:       #8E58A4;
-  --color-surface-dark: rgba(40,40,40,0.8);
-  --color-borde-dark:   #2F2F2F;
-  --color-muted-dark:   #A3A3A3;
-  --color-ghost-dark:   #DDDDDD;
-  --font-anek-odia: "Anek Odia", ui-sans-serif, system-ui, sans-serif;
 
-  --color-background: #000000;
-  --color-foreground: #f5f5f5;
-  --color-card: #0B0B16;
-  --color-card-foreground: #f5f5f5;
-  --color-popover: #0B0B16;
-  --color-popover-foreground: #f5f5f5;
-  --color-primary: #e5e5e5;
-  --color-primary-foreground: #000000;
-  --color-secondary: #12121f;
-  --color-secondary-foreground: #f5f5f5;
-  --color-muted: #12121f;
-  --color-muted-foreground: #E8E4F5;
-  --color-accent: #12121f;
-  --color-accent-foreground: #f5f5f5;
+  /* Tinted neutrals (neq pure #000/#fff) */
+  --color-surface-0:    #FCF8FA;   /* casi blanco, tirando a rosa */
+  --color-surface-1:    #F2EFF1;   /* light gray con tinte rosado */
+  --color-surface-2:    #E5E1E3;   /* mid light */
+  --color-surface-3:    #D3CFD1;   /* borders light */
+  --color-surface-dark: #141113;   /* almost black, tinted warm */
+  --color-surface-dim:  #1E1A1C;   /* card bg dark */
+  --color-borde-dark:   #2A2628;   /* borders */
+  --color-borde-soft:   rgba(42, 38, 40, 0.6);
+  --color-muted-dark:   #948E91;   /* body text dimmed */
+  --color-ghost-dark:   #C8C3C5;   /* secondary text */
+
+  --font-anek-odia: "Anek Odia", ui-sans-serif, system-ui, sans-serif;
+  --font-space: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── shadcn overrides ── */
+  --color-background: #0A0809;
+  --color-foreground: #F2EFF1;
+  --color-card: #141113;
+  --color-card-foreground: #F2EFF1;
+  --color-popover: #141113;
+  --color-popover-foreground: #F2EFF1;
+  --color-primary: #EF5095;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #1E1A1C;
+  --color-secondary-foreground: #C8C3C5;
+  --color-muted: #1E1A1C;
+  --color-muted-foreground: #948E91;
+  --color-accent: #1E1A1C;
+  --color-accent-foreground: #F2EFF1;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
-  --color-border: #1a1a2e;
-  --color-input: #1a1a2e;
-  --color-ring: #8E58A4;
+  --color-border: #2A2628;
+  --color-input: #2A2628;
+  --color-ring: #EF5095;
   --color-pink-accent: #EF5095;
   --color-green-accent: #54D1A2;
   --color-gradient-start: #EF5095;
   --color-gradient-end: #E2B100;
   --color-violet: #8E58A4;
   --color-cyan: #54D1A2;
-  --color-lavender: #E8E4F5;
-  --font-sans: "Lato", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --color-lavender: #C8B8D4;
+  --font-sans: "Space Grotesk", "Lato", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Anek Odia", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
@@ -54,117 +66,63 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0A0809; }
+::-webkit-scrollbar-thumb { background: #2A2628; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3A3638; }
 
-::-webkit-scrollbar-track {
-  background: #000000;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1a1a2e;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2a2a3e;
-}
-
-/* ========================
-   VANGUARDISTAS BRAND STYLES
-   ======================== */
-
-/* Selection */
+/* ── Selection ── */
 ::selection {
-  background: rgba(122, 44, 255, 0.3);
+  background: rgba(239, 80, 149, 0.25);
   color: white;
 }
 
-/* Gradient text utility */
-.gradient-text {
+/* ── Typography utilities ── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Solid accent text (NO gradient-text) */
+.text-fucsia-solid { color: #EF5095; }
+
+/* ── CTA Button ── */
+.btn-cta-landing {
   background: linear-gradient(135deg, #EF5095, #E2B100);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-cyan {
-  background: linear-gradient(135deg, #54D1A2, #8E58A4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Gradient button */
-.gradient-btn {
-  background: linear-gradient(259deg, #EF5095 5.24%, #E2B100 42.73%);
   color: white;
-  transition: all 0.3s ease;
+  font-weight: 700;
+  transition: box-shadow 0.3s ease-out, transform 0.2s ease-out;
+  will-change: transform;
+}
+.btn-cta-landing:hover {
+  box-shadow: 0 8px 32px rgba(239, 80, 149, 0.3);
+  transform: translateY(-2px);
+}
+.btn-cta-landing:active {
+  transform: translateY(0);
 }
 
-.gradient-btn:hover {
-  box-shadow: 0 0 30px rgba(239, 80, 149, 0.3);
-  transform: translateY(-1px);
+/* ── Glow utilities ── */
+.glow-pink { box-shadow: 0 0 40px rgba(239, 80, 149, 0.08); }
+.glow-violet { box-shadow: 0 0 40px rgba(142, 88, 164, 0.08); }
+.glow-cyan { box-shadow: 0 0 40px rgba(84, 209, 162, 0.06); }
+.glow-pink-strong { box-shadow: 0 0 60px rgba(239, 80, 149, 0.15); }
+
+/* ── Cards ── */
+.card-surface {
+  background: rgba(30, 26, 28, 0.7);
+  border: 1px solid rgba(42, 38, 40, 0.8);
+  backdrop-filter: blur(8px);
+}
+.card-surface:hover {
+  border-color: rgba(239, 80, 149, 0.15);
 }
 
-/* Glow utilities */
-.glow-violet {
-  box-shadow: 0 0 40px rgba(142, 88, 164, 0.15);
-}
-
-.glow-pink {
-  box-shadow: 0 0 40px rgba(239, 80, 149, 0.15);
-}
-
-.glow-cyan {
-  box-shadow: 0 0 40px rgba(84, 209, 162, 0.12);
-}
-
-.glow-violet-sm {
-  box-shadow: 0 0 20px rgba(142, 88, 164, 0.2);
-}
-
-/* Gradient border card */
-.gradient-border-card {
-  position: relative;
-  background: #0B0B16;
-  border-radius: 24px;
-}
-
-.gradient-border-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(122,44,255,0.3), rgba(255,60,172,0.2), rgba(0,224,255,0.15));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Neon border by category */
-.border-neon-marketing {
-  border-color: rgba(239, 80, 149, 0.25);
-  box-shadow: 0 0 20px rgba(239, 80, 149, 0.05), inset 0 0 20px rgba(239, 80, 149, 0.02);
-}
-
-.border-neon-procesos {
-  border-color: rgba(84, 209, 162, 0.25);
-  box-shadow: 0 0 20px rgba(84, 209, 162, 0.05), inset 0 0 20px rgba(84, 209, 162, 0.02);
-}
-
-.border-neon-tecnologia {
-  border-color: rgba(142, 88, 164, 0.25);
-  box-shadow: 0 0 20px rgba(142, 88, 164, 0.05), inset 0 0 20px rgba(142, 88, 164, 0.02);
-}
-
-/* Animated mesh background */
+/* ── Animated ambient bg ── */
 @keyframes mesh-gradient-v2 {
   0% { background-position: 0% 50%; }
   25% { background-position: 50% 100%; }
@@ -175,163 +133,108 @@ body {
 
 .mesh-gradient-bg-v2 {
   background:
-    radial-gradient(ellipse at 15% 20%, rgba(142, 88, 164, 0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 80%, rgba(239, 80, 149, 0.06) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 50%, rgba(84, 209, 162, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 75% 25%, rgba(226, 177, 0, 0.04) 0%, transparent 40%),
-    #000000;
+    radial-gradient(ellipse at 15% 20%, rgba(142, 88, 164, 0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 80%, rgba(239, 80, 149, 0.05) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(84, 209, 162, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 25%, rgba(226, 177, 0, 0.03) 0%, transparent 40%),
+    #0A0809;
   background-size: 200% 200%;
   animation: mesh-gradient-v2 25s ease infinite;
 }
 
-/* Scanner line animation */
-@keyframes scanner-line {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* ── Dot pulse glow ── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
 }
 
-.scanner-line {
+/* ── Float (hero image) ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* ── Spotlight hover glow on cards ── */
+.hover-glow {
   position: relative;
   overflow: hidden;
 }
-
-.scanner-line::after {
+.hover-glow::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(142, 88, 164, 0.1), transparent);
-  animation: scanner-line 4s ease-in-out infinite;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(239, 80, 149, 0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.hover-glow:hover::before {
+  opacity: 1;
 }
 
-/* Avatar pulse ring */
-@keyframes avatar-pulse-ring {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(142, 88, 164, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(142, 88, 164, 0); }
+/* ── Step connector line ── */
+.step-line {
+  background: linear-gradient(to bottom, rgba(84, 209, 162, 0.3), rgba(84, 209, 162, 0.05));
 }
 
-.avatar-pulse-ring {
-  animation: avatar-pulse-ring 2.5s ease-in-out infinite;
+/* ── Progress bars ── */
+.progress-bar-pink {
+  background: linear-gradient(90deg, #EF5095 60%, #E2B100);
+  box-shadow: 0 0 12px rgba(239, 80, 149, 0.25);
+}
+.progress-bar-violet {
+  background: linear-gradient(90deg, #8E58A4 60%, #EF5095);
+  box-shadow: 0 0 12px rgba(142, 88, 164, 0.25);
+}
+.progress-bar-yellow {
+  background: linear-gradient(90deg, #E2B100 60%, #FFC906);
+  box-shadow: 0 0 12px rgba(226, 177, 0, 0.2);
 }
 
-/* Dot pulse glow */
-@keyframes dot-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(84, 209, 162, 0.5); }
-  50% { box-shadow: 0 0 0 6px rgba(84, 209, 162, 0); }
+/* ── Gradient border card ── */
+.gradient-border-card {
+  position: relative;
+  background: #141113;
+  border-radius: 24px;
+}
+.gradient-border-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(239, 80, 149, 0.25), rgba(226, 177, 0, 0.15));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
-.dot-glow {
-  animation: dot-glow 2s ease-in-out infinite;
+/* ── Neon category borders ── */
+.border-neon-marketing {
+  border-color: rgba(239, 80, 149, 0.18);
+  box-shadow: 0 0 20px rgba(239, 80, 149, 0.04);
+}
+.border-neon-procesos {
+  border-color: rgba(84, 209, 162, 0.18);
+  box-shadow: 0 0 20px rgba(84, 209, 162, 0.04);
+}
+.border-neon-tecnologia {
+  border-color: rgba(142, 88, 164, 0.18);
+  box-shadow: 0 0 20px rgba(142, 88, 164, 0.04);
 }
 
-/* Glow text */
-.glow-text {
-  text-shadow: 0 0 20px rgba(142, 88, 164, 0.3);
-}
-
-/* Qubra message border */
-.qubra-message-border {
-  border-left: 2px solid transparent;
-  border-image: linear-gradient(180deg, #8E58A4, #EF5095) 1;
-}
-
-/* Reduced motion support */
+/* ── Viewport animations root ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
-
-/* ========================
-   LANDING PAGE UTILITIES
-   ======================== */
-
-/* Gradient CTA button — fucsia ↔ amarillo */
-.btn-cta-landing {
-  background: linear-gradient(259deg, #EF5095 5.24%, #E2B100 42.73%);
-  color: #fff;
-  font-family: var(--font-anek-odia);
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  transition: transform 0.2s ease, opacity 0.2s;
-}
-.btn-cta-landing:hover { transform: translateY(-2px); opacity: 0.92; }
-
-/* Accent text */
-.text-fucsia { color: var(--color-fucsia); }
-.text-verde   { color: var(--color-verde); }
-.text-amarillo{ color: var(--color-amarillo); }
-.text-morado  { color: var(--color-morado); }
-
-/* Gradient text — fucsia to amarillo */
-.gradient-text-landing {
-  background: linear-gradient(259deg, #EF5095 10%, #E2B100 60%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Float animation for hero image */
-@keyframes float-hero {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-14px); }
-}
-.animate-float { animation: float-hero 6s ease-in-out infinite; }
-
-/* Pulse dot */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.6; transform: scale(0.85); }
-}
-.animate-pulse-dot { animation: pulse-dot 2.2s ease-in-out infinite; }
-
-/* Underline reveal */
-@keyframes underline-in { to { transform: scaleX(1); } }
-
-/* ========================
-   LEGACY ANIMATIONS (kept for compatibility)
-   ======================== */
-
-/* Equalizer bars for typing indicator */
-@keyframes equalizer {
-  0%, 100% { height: 4px; }
-  50% { height: 16px; }
-}
-
-.equalizer-bar {
-  width: 3px;
-  border-radius: 2px;
-  background: linear-gradient(to top, #8E58A4, #EF5095);
-  animation: equalizer 0.8s ease-in-out infinite;
-}
-
-.equalizer-bar:nth-child(1) { animation-delay: 0ms; }
-.equalizer-bar:nth-child(2) { animation-delay: 100ms; }
-.equalizer-bar:nth-child(3) { animation-delay: 200ms; }
-.equalizer-bar:nth-child(4) { animation-delay: 300ms; }
-.equalizer-bar:nth-child(5) { animation-delay: 400ms; }
-
-/* Online dot */
-@keyframes online-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.online-dot {
-  animation: online-blink 3s ease-in-out infinite;
-}
-
-/* Markdown styles for resumen */
-.prose-invert h1 { font-size: 1.875rem; font-weight: 700; color: white; margin-bottom: 1rem; }
-.prose-invert h2 { font-size: 1.5rem; font-weight: 600; color: white; margin-bottom: 0.75rem; margin-top: 1.5rem; }
-.prose-invert h3 { font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 0.5rem; margin-top: 1rem; }
-.prose-invert h4 { font-size: 1.125rem; font-weight: 500; color: white; margin-bottom: 0.5rem; margin-top: 0.75rem; }
-.prose-invert p { margin-bottom: 1rem; color: rgba(255,255,255,0.8); line-height: 1.625; }
-.prose-invert ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: rgba(255,255,255,0.8); }
-.prose-invert ul li { margin-bottom: 0.25rem; }
-.prose-invert strong { color: white; font-weight: 600; }
-.prose-invert em { color: rgba(255,255,255,0.9); font-style: italic; }

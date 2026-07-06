@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Lato, Anek_Odia } from "next/font/google";
+import { Space_Grotesk, Anek_Odia } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { ConditionalFooter } from "@/components/layout/ConditionalFooter";
 import { Analytics, GtmNoScript } from "@/components/layout/Analytics";
 
-const lato = Lato({
-  variable: "--font-lato",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -34,15 +34,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${lato.variable} ${anekOdia.variable} dark h-full antialiased`}>
+    <html lang="es" className={`${spaceGrotesk.variable} ${anekOdia.variable} dark h-full antialiased`}>
       <head>
         <Analytics />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
- <GtmNoScript />
+      <body className="min-h-full flex flex-col" style={{ background: "#0A0809", color: "#F2EFF1" }}>
+        <GtmNoScript />
         <Header />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );
