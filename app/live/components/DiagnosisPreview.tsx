@@ -351,7 +351,7 @@ export function DiagnosisPreview({
                     </p>
                   </div>
                   <a
-                    href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
+                    href="https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2"
