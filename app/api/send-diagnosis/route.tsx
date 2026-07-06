@@ -55,22 +55,18 @@ async function createOdooLead(data: {
     }
     const uid = parseInt(uidMatch[1]);
 
-    // 2. Build description
+    // 2. Build description (compacta, sin el informe completo)
     const descripcion = [
-      `--- Diagnóstico Qubra ---`,
-      `Camino: ${data.camino || "N/A"}`,
-      `Score Marketing: ${data.scores.marketing}`,
-      `Score Experiencia: ${data.scores.experiencia}`,
-      `Score Global: ${data.scores.global}`,
-      `Nivel: ${data.nivel ?? "N/A"}`,
-      `Cliente Potencial: ${data.esClientePotencial ? "Sí" : "No"}`,
+      `━━━ Diagnóstico Qubra ━━━`,
+      ``,
+      `Score Global: ${data.scores.global}/10`,
+      `Marketing: ${data.scores.marketing}/10 | Experiencia: ${data.scores.experiencia}/10`,
+      `Nivel: ${data.nivel ?? "N/A"}/3 | Camino: ${data.camino || "N/A"}`,
+      ``,
       `Fuga Principal: ${data.fugaPrincipal}`,
       `Intervención Urgente: ${data.intervencionUrgente}`,
-      `Sector: ${data.sector || "N/A"}`,
-      `Qué Venden: ${data.queVenden || "N/A"}`,
-      ``,
-      `--- Informe ---`,
-      data.informe,
+      `Cliente Potencial: ${data.esClientePotencial ? "Sí" : "No"}`,
+      `Sector: ${data.sector || "N/A"} | Venden: ${data.queVenden || "N/A"}`,
     ].join("\n");
 
     // 3. Create lead with stage_id=1 (Fase 1: Entrada y Diagnostico (Qubra))
@@ -84,7 +80,7 @@ async function createOdooLead(data: {
     const createRes = await fetch(object, {
       method: "POST",
       headers: { "Content-Type": "text/xml" },
-      body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>create</string></value></param><param><value><array><data><value><struct><member><name>name</name><value><string>${leadName}</string></value></member><member><name>contact_name</name><value><string>${contactName}</string></value></member><member><name>email_from</name><value><string>${email}</string></value></member><member><name>partner_name</name><value><string>${empresa}</string></value></member><member><name>stage_id</name><value><int>1</int></value></member><member><name>type</name><value><string>opportunity</string></value></member><member><name>description</name><value><string>${descEscaped}</string></value></member></struct></value></data></array></value></param></params></methodCall>`,
+      body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>create</string></value></param><param><value><array><data><value><struct><member><name>name</name><value><string>${leadName}</string></value></member><member><name>contact_name</name><value><string>${contactName}</string></value></member><member><name>email_from</name><value><string>${email}</string></value></member><member><name>partner_name</name><value><string>${empresa}</string></value></member><member><name>stage_id</name><value><int>1</int></value></member><member><name>x_qubra_score</name><value><int>${data.scores.global}</int></value></member><member><name>type</name><value><string>opportunity</string></value></member><member><name>description</name><value><string>${descEscaped}</string></value></member></struct></value></data></array></value></param></params></methodCall>`,
     });
     const createText = await createRes.text();
     console.log("Odoo lead created, response:", createText.slice(0, 100));
