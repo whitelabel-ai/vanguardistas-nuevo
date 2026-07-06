@@ -95,7 +95,7 @@ async function createOdooLead(data: {
       const writeRes = await fetch(object, {
         method: "POST",
         headers: { "Content-Type": "text/xml" },
-        body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>write</string></value></param><param><value><array><data><value><array><data><value><int>${leadId}</int></value></data></array></value></data></array></value></param><param><value><struct><member><name>x_qubra_score</name><value><int>${scoreValue}</int></value></member></struct></value></param></params></methodCall>`,
+        body: `<?xml version="1.0"?><methodCall><methodName>execute_kw</methodName><params><param><value><string>${odooDb}</string></value></param><param><value><int>${uid}</int></value></param><param><value><string>${odooApiKey}</string></value></param><param><value><string>crm.lead</string></value></param><param><value><string>write</string></value></param><param><value><array><data><value><array><data><value><int>${leadId}</int></value></data></array></value><value><struct><member><name>x_qubra_score</name><value><int>${scoreValue}</int></value></member></struct></value></data></array></value></param></params></methodCall>`,
       });
       const writeText = await writeRes.text();
       // Extraer faultString del XML de error y mostrar la última línea (el error real)
