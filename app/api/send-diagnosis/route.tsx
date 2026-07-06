@@ -100,10 +100,13 @@ async function createOdooLead(data: {
       const writeText = await writeRes.text();
       // Extraer faultString del XML de error y mostrar la última línea (el error real)
       const faultMatch = writeText.match(/<name>faultString<\/name>\s*<value><string>([\s\S]*?)<\/string><\/value>/);
-      const fullError = faultMatch ? faultMatch[1] : writeText;
-      const lines = fullError.split('\n').filter(l => l.trim());
-      const lastLine = lines[lines.length - 1] || fullError.slice(0, 300);
-      console.log("Odoo x_qubra_score write error:", lastLine);
+      if (faultMatch) {
+        const fullError = faultMatch[1];
+        const lines = fullError.split('\n').filter(l => l.trim());
+        console.log("Odoo x_qubra_score write failed:", lines[lines.length - 1] || fullError.slice(0, 300));
+      } else {
+        console.log("Odoo x_qubra_score write SUCCESS, score:", scoreValue);
+      }
     }
   } catch (err) {
     console.warn("Odoo lead creation failed (non-blocking):", err);
