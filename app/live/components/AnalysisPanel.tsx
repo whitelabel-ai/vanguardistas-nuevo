@@ -344,7 +344,7 @@ export function AnalysisPanel({
                       Una sesión gratuita de 30 minutos para profundizar en tu Mapa de Fugas y diseñar un plan de acción a medida.
                     </p>
                     <a
-                      href="https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica"
+                      href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full"

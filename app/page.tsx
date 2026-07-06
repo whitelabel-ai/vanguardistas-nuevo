@@ -630,7 +630,7 @@ tiene{" "}
               </button>
             </Link>
             <a
-              href="https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica"
+              href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t"
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-5 rounded-2xl text-[14px] transition-colors"
               style={{ border: "1px solid rgba(242,239,241,0.1)", color: "rgba(242,239,241,0.5)" }}

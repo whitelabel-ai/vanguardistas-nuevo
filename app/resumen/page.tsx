@@ -61,7 +61,7 @@ export default function ResumenPage() {
             <Button
               variant="outline"
               className="border-white/10 bg-white/5 hover:bg-white/10"
-              onClick={() => window.open("https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica", "_blank")}
+              onClick={() => window.open("https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t", "_blank")}
             >
               <CalendarPlus className="w-4 h-4 mr-2" />
               Agendar cita
@@ -104,7 +104,7 @@ export default function ResumenPage() {
             <Button
               variant="outline"
               className="border-white/10 bg-white/5 hover:bg-white/10"
-              onClick={() => window.open("https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica", "_blank")}
+              onClick={() => window.open("https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t", "_blank")}
             >
               <CalendarPlus className="w-4 h-4 mr-2" />
               Agendar cita

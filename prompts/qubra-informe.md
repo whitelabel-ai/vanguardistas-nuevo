@@ -54,7 +54,7 @@ Intervención urgente: "Expansión de Galería"
    - Intervención urgente destacada
 5. ## El Gancho (CTA)
    - Invitación a la "Sesión de Curaduría Estratégica"
-   - Link: https://calendly.com/gerencia-2qy/sesion-de-curaduria-estrategica
+   - Link: https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1VOvRLtpRq_-fEPeAwv3NtDlzbm8Lkl7jZRbpQffc9FcId7Puw1Hwy6_O_ijtFWCaXmKjguf2t
 
 ### FORMATO DE SALIDA ESPECIAL
 
